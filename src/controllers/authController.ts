@@ -61,7 +61,6 @@ export const login = async (req: Request, res: Response) => {
     const maxAge = 90 * 24 * 60 * 60 * 1000;
     const token = createJWT(user._id, maxAge);
     res.setHeader("Authorization", "Bearer" + token);
-
     res.status(StatusCodes.OK).json({
       message: "Account signed in succesffuly",
       authToken: token,
@@ -82,7 +81,8 @@ export const forgotPassord = async (req: Request, res: Response) => {
           res.status(StatusCodes.NOT_FOUND).json({message:"User not found"})
         }
 
-      const resetToken = user.createResetPasswordToken()
+    const resetToken = user.createResetPasswordToken()
+    console.log("my reset token", resetToken)
 
     // save the encrypted token in the data base
       await user.save()
@@ -123,22 +123,84 @@ export const forgotPassord = async (req: Request, res: Response) => {
      }
   };
 
+export const validatePasswordResetToken = async (
+  req: Request,
+  res: Response
+) => {
+  const { token } = req.params;
+
+  try {
+    // Encrypt the incoming token
+    const encryptedToken = crypto
+      .createHash("sha256")
+      .update(token)
+      .digest("hex");
+
+    // Find the user whose passwordResetToken matches the encrypted token
+    const user = await User.findOne({
+      passwordResetToken: encryptedToken,
+      passwordResetTokenExpire: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res
+        .status(StatusCodes.NON_AUTHORITATIVE_INFORMATION)
+        .json({ message: "Token is invalid or expired" });
+    }
+
+    // If token is valid, redirect to client-side password reset form
+    const clientURL = process.env.CLIENT_URL; 
+    return res.redirect(`${clientURL}/reset-password/${token}`);
+  } catch (error) {
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: "Error verifying password reset token" });
+  }
+};
+
 export const resetPassword = async (req: Request, res: Response) => {
   const { token } = req.params;
-    try {
-    //encrypt the incoming token
-    const encryptedToken = crypto.createHash('sha256').update(token).digest('hex')
+  const { newPassword } = req.body;
 
-    // find the user whose passwordResetToken matches req.params.token
-    const user = User.findOne({passwordResetToken:encryptedToken, passwordResetTokenExpire:{$gt:Date.now()}})
-    
+  try {
+    if (!newPassword) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ error: "New password is required" });
+    }
+
+    // Encrypt the incoming token
+    const encryptedToken = crypto
+      .createHash("sha256")
+      .update(token)
+      .digest("hex");
+
+    // Find the user whose passwordResetToken matches the encrypted token
+    const user = await User.findOne({
+      passwordResetToken: encryptedToken,
+      passwordResetTokenExpire: { $gt: Date.now() },
+    });
+
     if (!user) {
-       res.status(StatusCodes.NON_AUTHORITATIVE_INFORMATION).json({message:'Token is invalid or expired'})
-      }
-      
-      
+      return res
+        .status(StatusCodes.NON_AUTHORITATIVE_INFORMATION)
+        .json({ message: "Token is invalid or expired" });
+    }
 
+    // Update user's password
+    user.password = newPassword;
+    user.passwordResetToken = undefined;
+    user.passwordResetTokenExpire = undefined;
+
+    // save the updated information to db
+    await user.save();
+
+    return res
+      .status(StatusCodes.OK)
+      .json({ message: "Password reset successful" });
   } catch (error) {
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error:"Error verifyng passoword"});
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: "Error resetting password" });
   }
 };

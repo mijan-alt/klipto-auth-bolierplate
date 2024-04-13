@@ -1,14 +1,23 @@
 import { Router } from "express";
-import { login, signUp } from "../controllers/authController.js";
-import { forgotPassord } from "../controllers/authController.js";
-import { resetPassword } from "../controllers/authController.js";
+
+
+import {
+    login,
+    signUp,
+forgotPassord, 
+ validatePasswordResetToken,
+  resetPassword,
+} from "../controllers/authController.js";
 
 const authRouter = Router();
 
-authRouter.route("/signUp").post(signUp);
+authRouter.route("/sign-up").post(signUp);
 authRouter.route("/login").post(login);
-authRouter.route("/forgotPassword").post(forgotPassord);
-authRouter.route("/resetPassword:").post(resetPassword);
+authRouter.route("/forgot-password").post(forgotPassord);
+authRouter.route("/reset-password:token").post(resetPassword);
+authRouter
+  .route("/validate-reset-token:token")
+  .post(validatePasswordResetToken);
 
 
 export default authRouter;
