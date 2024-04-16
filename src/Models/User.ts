@@ -1,19 +1,11 @@
 import mongoose from "mongoose";
-import { UserInterface } from "../Interface.js";
 import bcrypt from "bcrypt";
 import crypto from 'crypto'
+import { UserInterface } from "../Interface";
 
-// declare the interface here
-interface User {
-  fullname: string;
-  email: string;
-  password: string;
-  passwordResetToken?: string | null;
-  passwordResetTokenExpire?: Date | null;
-}
 
-const UserSchema = new mongoose.Schema<User>({
-  fullname: {
+const UserSchema = new mongoose.Schema<UserInterface>({
+  username: {
     type: String,
     required: true,
   },
@@ -28,9 +20,10 @@ const UserSchema = new mongoose.Schema<User>({
     type: String,
     required: true,
   },
+  businesses:[{ type: mongoose.Schema.Types.ObjectId, ref: 'Business' }],
 
   passwordResetToken: String,
-  passwordResetTokenExpire:Date
+  passwordResetTokenExpire: Date,
 });
 
 UserSchema.pre("save", async function () {
@@ -56,6 +49,6 @@ UserSchema.methods.createResetPasswordToken = function() {
   return resetToken
 }
 
-const User = mongoose.model<User>("User", UserSchema);
+const User = mongoose.model<UserInterface>("User", UserSchema);
 
 export default User;

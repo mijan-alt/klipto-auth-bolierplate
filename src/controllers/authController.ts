@@ -7,19 +7,20 @@ import { createJWT } from "../utils/jwt.js";
 import bcrypt from "bcrypt";
 import { config } from "dotenv";
 import UnAuthorizedError from "../errors/UnauthorizedError.js";
-import fs from 'fs'
-import path from 'path'
-import ejs from 'ejs'
+import fs from "fs";
+import path from "path";
+import ejs from "ejs";
 import { sendMails } from "../utils/sendEmail.js";
 import { isTokenValid } from "../utils/jwt.js";
-import crypto from 'crypto'
-
+import crypto from "crypto";
+import { Business } from "../Models/Business.js";
+import { BusinessInterface } from "../Interface.js";
 
 config();
 const localUrl = process.env.BASE_SERVER_URL;
 const clientUrl = process.env.CLIENT_URL;
 export const signUp = async (req: Request, res: Response) => {
-  const { fullname, email, password } = req.body;
+  const { email, password, username } = req.body;
 
   try {
     const emailAlreadyExist = await User.findOne({ email });
@@ -28,17 +29,67 @@ export const signUp = async (req: Request, res: Response) => {
     }
 
     let userData: UserInterface = {
-      fullname,
       email,
       password,
+      username,
     };
     const newUser = await User.create(userData);
 
     res
       .status(StatusCodes.CREATED)
       .json({ message: "User created successfuly", data: newUser });
+
+    res.redirect(`${clientUrl}/addBusiness?userId=${newUser._id}`);
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const addBusiness = async (req: Request, res: Response) => {
+  const { businessName, businessEmail, businessCategory, businessBio } =
+    req.body;
+  const userId = req.query.userId; //Get the userId from thre query parameters
+
+  try {
+    //find the user by Id
+    const user= await User.findById(userId);
+
+    if (!user) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ message: "User not found" });
+    }
+    //create a new business
+    const newBusiness: BusinessInterface = {
+      businessName,
+      businessEmail,
+      businessCategory,
+      businessBio,
+    };
+
+    let createdBusiness = await Business.create(newBusiness);
+
+    if (!user.businesses) {
+      user.businesses = [createdBusiness._id];
+    } else {
+      user.businesses.push(createdBusiness._id);
+    }
+   
+
+    await user.save()
+
+     res
+       .status(StatusCodes.CREATED)
+       .json({
+         message: "Business created and added to user",
+       });
+
+ 
+   
+
+    console.log("my createad business");
+  } catch (error) {
+     console.log(error)
   }
 };
 
@@ -72,56 +123,56 @@ export const login = async (req: Request, res: Response) => {
 };
 
 export const forgotPassord = async (req: Request, res: Response) => {
-    const { email } = req.body;
-   
-        const user: any = await User.findOne({ email });
+  const { email } = req.body;
 
-        if (!user) {
-          console.log("User does not exit");
-          res.status(StatusCodes.NOT_FOUND).json({message:"User not found"})
-        }
+  const user: any = await User.findOne({ email });
 
-    const resetToken = user.createResetPasswordToken()
-    console.log("my reset token", resetToken)
+  if (!user) {
+    console.log("User does not exit");
+    res.status(StatusCodes.NOT_FOUND).json({ message: "User not found" });
+  }
 
-    // save the encrypted token in the data base
-      await user.save()
+  const resetToken = user.createResetPasswordToken();
+  console.log("my reset token", resetToken);
 
-      console.log(resetToken)
-      const resetUrl = `${localUrl}/api/v1/users/resetPassword/${resetToken}`;
-       const templatePath = path.join(
-         __dirname,
-         "../views/forgotpassword.ejs"
-       );
-      const renderHtml = await ejs.renderFile(
-        templatePath,
-        {
-          userFullname: user.fullname,
-          userEmail: user.email,
-          userRecoveryUrl: resetUrl,
-        },
-        { async: true }
-        );
-        
-     try {
-      
-        await sendMails({
-            email: user.email,
-            subject:"Password Recovery",
-            html: renderHtml
-        });
-       
-       res.status(StatusCodes.OK).json({message:'Password reset link has been sent to your email'})
-     } catch (error) {
-      //  in the event of an unfuufllied promise , we want to set the reset tokens to undefined
-       user.passwordResetToken = undefined;
-       user.passwordResetTokenExpire = undefined
-       //then we save these new values to the database
+  // save the encrypted token in the data base
+  await user.save();
 
-       user.save()
-       res.status(StatusCodes.REQUEST_TIMEOUT).json({message:"There was an error sending password reset email. Try again"})
-     }
-  };
+  console.log(resetToken);
+  const resetUrl = `${localUrl}/api/v1/users/resetPassword/${resetToken}`;
+  const templatePath = path.join(__dirname, "../views/forgotpassword.ejs");
+  const renderHtml = await ejs.renderFile(
+    templatePath,
+    {
+      userFullname: user.fullname,
+      userEmail: user.email,
+      userRecoveryUrl: resetUrl,
+    },
+    { async: true }
+  );
+
+  try {
+    await sendMails({
+      email: user.email,
+      subject: "Password Recovery",
+      html: renderHtml,
+    });
+
+    res
+      .status(StatusCodes.OK)
+      .json({ message: "Password reset link has been sent to your email" });
+  } catch (error) {
+    //  in the event of an unfuufllied promise , we want to set the reset tokens to undefined
+    user.passwordResetToken = undefined;
+    user.passwordResetTokenExpire = undefined;
+    //then we save these new values to the database
+
+    user.save();
+    res.status(StatusCodes.REQUEST_TIMEOUT).json({
+      message: "There was an error sending password reset email. Try again",
+    });
+  }
+};
 
 export const validatePasswordResetToken = async (
   req: Request,
@@ -149,7 +200,7 @@ export const validatePasswordResetToken = async (
     }
 
     // If token is valid, redirect to client-side password reset form
-    const clientURL = process.env.CLIENT_URL; 
+    const clientURL = process.env.CLIENT_URL;
     return res.redirect(`${clientURL}/reset-password/${token}`);
   } catch (error) {
     res

@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { addBusiness } from "../controllers/authController.js";
 
 
 import {
@@ -18,6 +19,7 @@ authRouter.route("/reset-password:token").post(resetPassword);
 authRouter
   .route("/validate-reset-token:token")
   .post(validatePasswordResetToken);
+authRouter.route("/add-business").post(addBusiness);
 
 
 export default authRouter;
