@@ -1,6 +1,6 @@
 import { isTokenValid } from "../utils/jwt.js";
 import { Express, Request, Response, NextFunction } from "express";
-import UnAuthorizedError from "../errors/UnauthorizedError.js";
+import UnAuthenticatedError from "../errors/UnAuthenticated.js";
 import User from "../Models/User.js";
 
 export const authenticateUser = async (
@@ -13,14 +13,18 @@ export const authenticateUser = async (
   // check header
 
   const authHeader = req.headers.authorization;
-  if (authHeader && authHeader.startsWith("Bearer")) {
-    token = authHeader.split(" ")[1];
-  } else if (req.cookies.token) {
-    token = req.cookies.token;
+
+
+  if (!authHeader || authHeader.startsWith("Bearer ")) {
+    throw new UnAuthenticatedError("Authentication Token is missing")
   }
+  console.log("my auth header", authHeader)
+  
+  token = authHeader?.split(" ")[1]
+  console.log("my token", token)
 
   if (!token) {
-    throw new UnAuthorizedError("Authentication is invalid");
+    throw new UnAuthenticatedError("Authentication is invalid");
   }
 
   try {
@@ -29,11 +33,11 @@ export const authenticateUser = async (
     const user = await User.findById(payload._id);
 
     if (!user) {
-      throw new UnAuthorizedError("User not found");
+      throw new UnAuthenticatedError("User not found");
     }
 
     next();
   } catch (error) {
-    throw new UnAuthorizedError("Authentication is invalid");
+    throw new UnAuthenticatedError("Authentication is invalid");
   }
 };

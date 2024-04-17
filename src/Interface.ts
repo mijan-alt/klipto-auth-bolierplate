@@ -2,19 +2,20 @@ import mongoose from "mongoose";
 import { Document } from "mongoose";
 import { Types } from "mongoose";
 
-export interface UserInterface {
+export interface UserInterface extends Document {
   username: string;
   email: string;
   password: string;
   passwordResetToken?: String;
   passwordResetTokenExpire?: Date;
-  businesses?:[Types.ObjectId]
+  businesses: Types.ObjectId[];
 }
 
 
-export interface BusinessInterface  {
+export interface BusinessInterface extends Document {
   businessName: string;
   businessEmail: string;
   businessCategory: string;
   businessBio: string;
+  userId: Types.ObjectId;
 }

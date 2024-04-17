@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import { BusinessInterface } from "../Interface";
 
 
@@ -7,6 +7,7 @@ const businessSchema = new mongoose.Schema<BusinessInterface>({
   businessEmail: { type: String, required: true },
   businessCategory: { type: String, required: true },
   businessBio: { type: String, required: true },
+  userId: { type: Schema.Types.ObjectId, required: true },
 });
 
 export const Business = mongoose.model<BusinessInterface>("Business", businessSchema);

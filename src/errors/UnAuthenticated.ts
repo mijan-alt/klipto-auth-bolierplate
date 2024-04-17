@@ -1,6 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 
-class UnAuthorizedError extends Error {
+class UnAuthenticatedError extends Error {
   statusCode: number;
   error: string;
 
@@ -12,4 +12,4 @@ class UnAuthorizedError extends Error {
   }
 }
 
-export default UnAuthorizedError;
+export default UnAuthenticatedError;

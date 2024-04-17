@@ -1,8 +1,28 @@
 //adding business
 http://localhost:5000/api/v1/auth/add-business?userId=6615640c0496eecef773ed06
 
+{"businessName":"mijan for the world",
+"businessEmail": "wiki@gmail.com",
+"businessCategory":"Enginerring"
+ "businessBio": "We are invlvolved in shipment"
+}
+
 
 /get single user
 http://localhost:5000/api/v1/user/single-user/6615640c0496eecef773ed06
 
 
+/authToken
+
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2MWUwYzEzZTMxNDJjOTExNmZmOGFlMiIsImlhdCI6MTcxMzMxODE2MiwiZXhwIjo5NDg5MzE4MTYyfQ.OGf1pSAtrQ5vvha-60AcyzB6JZTyi30BIzqr-p8m6a0
+
+
+//sign-up
+
+http://localhost:5000/api/v1/auth/sign-up
+
+{
+    "username":"mijan"
+    "email":"mijanigoni@gmail.com"
+    "password":"MIjan@tech"
+}

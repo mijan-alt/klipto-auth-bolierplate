@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 import { createJWT } from "../utils/jwt.js";
 import bcrypt from "bcrypt";
 import { config } from "dotenv";
-import UnAuthorizedError from "../errors/UnauthorizedError.js";
+import UnAuthenticatedError from "../errors/UnAuthenticated.js";
 import fs from "fs";
 import path from "path";
 import ejs from "ejs";
@@ -15,6 +15,7 @@ import { isTokenValid } from "../utils/jwt.js";
 import crypto from "crypto";
 import { Business } from "../Models/Business.js";
 import { BusinessInterface } from "../Interface.js";
+import BadRequestError from "../errors/BadRequest.js";
 
 config();
 const localUrl = process.env.BASE_SERVER_URL;
@@ -23,21 +24,19 @@ export const signUp = async (req: Request, res: Response) => {
   const { email, password, username } = req.body;
 
   try {
-    const emailAlreadyExist = await User.findOne({ email });
-    if (emailAlreadyExist) {
+    const user = await User.findOne({ email });
+    if (user) {
       throw new Error("Email Already Exist");
     }
 
-    let userData: UserInterface = {
+    const userData: UserInterface = new User({
       email,
       password,
       username,
-    };
-    const newUser = await User.create(userData);
+    });
 
-    res
-      .status(StatusCodes.CREATED)
-      .json({ message: "User created successfuly", data: newUser });
+    // Save the user data to the database
+    const newUser = await userData.save();
 
     res.redirect(`${clientUrl}/addBusiness?userId=${newUser._id}`);
   } catch (error) {
@@ -52,44 +51,49 @@ export const addBusiness = async (req: Request, res: Response) => {
 
   try {
     //find the user by Id
-    const user= await User.findById(userId);
+    const user: UserInterface | null = await User.findById(userId);
 
     if (!user) {
       return res
         .status(StatusCodes.NOT_FOUND)
         .json({ message: "User not found" });
     }
-    //create a new business
-    const newBusiness: BusinessInterface = {
+    const businessData = {
       businessName,
       businessEmail,
       businessCategory,
       businessBio,
+      userId: userId,
     };
+    //create a new business
+    const newBusiness: BusinessInterface = new Business(businessData);
 
-    let createdBusiness = await Business.create(newBusiness);
+    await newBusiness.save();
 
-    if (!user.businesses) {
-      user.businesses = [createdBusiness._id];
-    } else {
-      user.businesses.push(createdBusiness._id);
+    if (user.businesses.length >= 3) {
+      return res.status(400).json({
+        message: "User already has the maximum number of businesses (3).",
+      });
     }
-   
+    user.businesses.push(newBusiness._id);
 
-    await user.save()
+    await user.save();
 
-     res
-       .status(StatusCodes.CREATED)
-       .json({
-         message: "Business created and added to user",
-       });
-
- 
-   
+    const maxAge = 90 * 24 * 60 * 60 * 1000;
+    const token = createJWT(user._id, maxAge);
+    res.setHeader("Authorization", "Bearer" + token);
+    res.status(StatusCodes.OK).json({
+      message: "Account signed in succesffuly",
+      authToken: token,
+      user,
+    });
 
     console.log("my createad business");
   } catch (error) {
-     console.log(error)
+    console.log(error);
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: "Something went wrong" });
   }
 };
 
@@ -106,7 +110,7 @@ export const login = async (req: Request, res: Response) => {
     const isPasswordCorrect = await user.comparePassword(password);
 
     if (!isPasswordCorrect) {
-      throw new UnAuthorizedError("Invalid Credentails");
+      throw new BadRequestError("Invalid Credentails");
     }
 
     const maxAge = 90 * 24 * 60 * 60 * 1000;
