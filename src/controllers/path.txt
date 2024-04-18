@@ -26,3 +26,8 @@ http://localhost:5000/api/v1/auth/sign-up
     "email":"mijanigoni@gmail.com"
     "password":"MIjan@tech"
 }
+
+
+//google signup
+
+"http://localhost:5000/auth/google

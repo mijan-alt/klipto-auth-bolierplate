@@ -15,21 +15,35 @@ const UserSchema = new mongoose.Schema<UserInterface>({
     required: true,
     unique: true,
   },
+  image: {
+    type:String
+  },
+  googleId: String,
 
   password: {
     type: String,
-    required: true,
-  },
-  businesses:[{ type: mongoose.Schema.Types.ObjectId, ref: 'Business' }],
+   },
+  businesses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Business" }],
 
   passwordResetToken: String,
   passwordResetTokenExpire: Date,
 });
 
-UserSchema.pre("save", async function () {
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
+UserSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
+    // If password is not modified, proceed to the next middleware
+    return next();
+  }
+
+  try {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+  } catch (error:any) {
+    next(error);
+  }
 });
+
 
 UserSchema.methods.comparePassword = async function (userPassword: string) {
   const isMatch = await bcrypt.compare(userPassword, this.password);

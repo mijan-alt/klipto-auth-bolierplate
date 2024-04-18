@@ -7,9 +7,79 @@ import { connectDb } from "./db/connectDb.js";
 import bodyParser from "body-parser";
 import express from 'express'
 import userRouter from "./routes/userRoute.js";
+import session from "express-session";
+import passport from "passport";
+import GoogleStrategy from 'passport-google-oauth20'
+import { config } from "dotenv";
+import User from "./Models/User.js";
+
+
 
 const app = express();
+
+config()
 app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(
+  session({
+    secret: "keyboard cat",
+    resave: false,
+    saveUninitialized: true,
+  })
+);
+passport.serializeUser((user:any, done) => {
+  done(null, user.id)
+})
+
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await User.findById(id)
+    done(null, user)
+  } catch (error) {
+     done(error, null)
+  }
+})
+
+app.use(passport.initialize())
+app.use(passport.session())
+
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.CLIENT_ID,
+      clientSecret: process.env.CLIENT_SECRET,
+      callbackURL: "/auth/google/callback",
+      scope: ["profile", "email"],
+    },
+    async (
+      accessToken: string,
+      refreshToken: string,
+      profile: any,
+      done: any
+    ) => {
+      console.log("Profile:", profile); // Log the profile object
+      try {
+        // Check if user already exists in the db based on the email
+        let user = await User.findOne({ email: profile.emails[0].value});
+
+        if (!user) {
+          // If user does not exist
+          user = await User.create({
+            googleId: profile.id,
+            username: profile.displayName,
+            email: profile.emails[0].value, 
+            image:profile.photos[0].value
+          });
+        }
+        return done(null, user);
+      } catch (error) {
+        return done(error, null);
+      }
+    }
+  )
+);
+
+
 
 app.use(
   cors({
@@ -22,6 +92,13 @@ app.use(
 app.use(cookieParser());
 app.use(express.json());
 
+app.get('/auth/google', passport.authenticate("google", {
+  scope: ["profile", "email"],
+}))
+
+app.get('/auth/google/callback', passport.authenticate("google",{
+  successRedirect:'http://localhost:3000'
+}))
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user", userRouter);

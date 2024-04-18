@@ -16,10 +16,18 @@ import crypto from "crypto";
 import { Business } from "../Models/Business.js";
 import { BusinessInterface } from "../Interface.js";
 import BadRequestError from "../errors/BadRequest.js";
+import passport from 'passport'
+import GoogleStrategy from 'passport-google-oidc'
+
+
+
 
 config();
 const localUrl = process.env.BASE_SERVER_URL;
 const clientUrl = process.env.CLIENT_URL;
+
+
+
 export const signUp = async (req: Request, res: Response) => {
   const { email, password, username } = req.body;
 
@@ -81,10 +89,9 @@ export const addBusiness = async (req: Request, res: Response) => {
 
     const maxAge = 90 * 24 * 60 * 60 * 1000;
     const token = createJWT(user._id, maxAge);
-    res.setHeader("Authorization", "Bearer" + token);
+    res.cookie('jwt', token, {httpOnly:true})//store the token in a cookie but make it available only on the server
     res.status(StatusCodes.OK).json({
       message: "Account signed in succesffuly",
-      authToken: token,
       user,
     });
 
@@ -115,7 +122,7 @@ export const login = async (req: Request, res: Response) => {
 
     const maxAge = 90 * 24 * 60 * 60 * 1000;
     const token = createJWT(user._id, maxAge);
-    res.setHeader("Authorization", "Bearer" + token);
+   res.cookie('jwt', token, {httpOnly:true})
     res.status(StatusCodes.OK).json({
       message: "Account signed in succesffuly",
       authToken: token,
@@ -259,3 +266,14 @@ export const resetPassword = async (req: Request, res: Response) => {
       .json({ error: "Error resetting password" });
   }
 };
+
+
+export const logout = async (req: Request, res: Response) => {
+try {
+  res.clearCookie('jwt')
+  res.status(StatusCodes.OK).json({message:'User signed out succesffuy'})
+} catch (error) {
+  return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({mesage:"Oops, there was an error signing out"})
+}
+
+}

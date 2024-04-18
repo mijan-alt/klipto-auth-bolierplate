@@ -8,7 +8,9 @@ export interface UserInterface extends Document {
   password: string;
   passwordResetToken?: String;
   passwordResetTokenExpire?: Date;
+  googleId: string;
   businesses: Types.ObjectId[];
+  image?: string;
 }
 
 

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { addBusiness } from "../controllers/authController.js";
-
+import { googleAuthStart } from "../controllers/authController.js";
 
 import {
     login,
@@ -20,6 +20,7 @@ authRouter
   .route("/validate-reset-token:token")
   .post(validatePasswordResetToken);
 authRouter.route("/add-business").post(addBusiness);
+
 
 
 export default authRouter;
