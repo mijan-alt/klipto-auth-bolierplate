@@ -5,6 +5,7 @@ import { UserInterface } from "../Interface";
 
 
 const UserSchema = new mongoose.Schema<UserInterface>({
+
   username: {
     type: String,
     required: true,

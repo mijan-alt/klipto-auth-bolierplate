@@ -12,12 +12,19 @@ import passport from "passport";
 import GoogleStrategy from 'passport-google-oauth20'
 import { config } from "dotenv";
 import User from "./Models/User.js";
+import { Request, Response } from "express";
+import { UserInterface } from "./Interface.js";
 
 
 
-const app = express();
+
+
+const app:Express = express();
 
 config()
+
+// Define a custom interface extending express.User
+
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(
@@ -43,6 +50,7 @@ passport.deserializeUser(async (id, done) => {
 app.use(passport.initialize())
 app.use(passport.session())
 
+
 passport.use(
   new GoogleStrategy(
     {
@@ -59,8 +67,10 @@ passport.use(
     ) => {
       console.log("Profile:", profile); // Log the profile object
       try {
-        // Check if user already exists in the db based on the email
-        let user = await User.findOne({ email: profile.emails[0].value});
+        // Check if user already exists in the db based on the
+        let user = await User.findOne({
+          email: profile.emails[0].value,
+        });
 
         if (!user) {
           // If user does not exist
@@ -79,8 +89,6 @@ passport.use(
   )
 );
 
-
-
 app.use(
   cors({
     origin: ["http://localhost:5000"],
@@ -96,9 +104,22 @@ app.get('/auth/google', passport.authenticate("google", {
   scope: ["profile", "email"],
 }))
 
-app.get('/auth/google/callback', passport.authenticate("google",{
-  successRedirect:'http://localhost:3000'
-}))
+app.get(
+  "/auth/google/callback",
+  passport.authenticate("google", {
+    failureRedirect: "http://localhost:3000", // Redirect to a success route
+  }), (req: Request, res: Response) => {
+    console.log(req)
+    if (req.user) {
+      const { user } = req
+       res.redirect(`http://localhost:3000/addBusiness`);
+      }
+     
+  }
+    
+  
+);
+
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user", userRouter);

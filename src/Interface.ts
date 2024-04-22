@@ -21,3 +21,13 @@ export interface BusinessInterface extends Document {
   businessBio: string;
   userId: Types.ObjectId;
 }
+
+// Assuming 'e' is your namespace
+namespace e {
+  // Define the User type within the namespace
+  export interface User {
+    _id: string;
+    // Other properties of the user object if any
+  }
+}
+
