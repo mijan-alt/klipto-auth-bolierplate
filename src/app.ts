@@ -104,7 +104,7 @@ app.get('/auth/google', passport.authenticate("google", {
   scope: ["profile", "email"],
 }))
 
-app.get(
+app.get( 
   "/auth/google/callback",
   passport.authenticate("google", {
     failureRedirect: "http://localhost:3000", // Redirect to a success route
@@ -115,7 +115,7 @@ app.get(
        res.redirect(`http://localhost:3000/addBusiness`);
       }
      
-  }
+}
     
   
 );
