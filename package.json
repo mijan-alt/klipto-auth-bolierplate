@@ -2,10 +2,11 @@
   "name": "enterbox-server",
   "version": "1.0.0",
   "description": "",
-  "main": "./src/app.ts",
+  "main": "./dist/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "tsx ./src/app.ts"
+    "dev": "nodemon ./dist/app.js",
+    "tsc": "tsc"
   },
   "keywords": [],
   "author": "",
@@ -37,5 +38,10 @@
     "passport-google-oauth20": "^2.0.0",
     "tsx": "^4.7.2",
     "typescript": "^5.4.5"
+  },
+  "devDependencies": {
+    "@types/nodemailer": "^6.4.14",
+    "nodemon": "^3.1.0",
+    "tsc": "^2.0.4"
   }
 }
