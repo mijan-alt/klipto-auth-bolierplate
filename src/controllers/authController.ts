@@ -32,7 +32,7 @@ export const signUp = async (req: Request, res: Response) => {
   const { email, password, username } = req.body;
 
   try {
-    const user = await User.findOne({ email });
+    const user: UserInterface | null = await User.findOne({ email });
     if (user) {
       throw new Error("Email Already Exist");
     }
@@ -45,6 +45,9 @@ export const signUp = async (req: Request, res: Response) => {
 
     // Save the user data to the database
     const newUser = await userData.save();
+    const maxAge = 90 * 24 * 60 * 60 * 1000;
+    const token = createJWT(newUser._id, maxAge);
+    res.cookie("jwt", token, { httpOnly: true }); //store the token in a cookie but make it available only on the server
 
     res.redirect(`http://localhost:3000/addBusiness?userId=${newUser._id}`);
   } catch (error) {
@@ -87,9 +90,7 @@ export const addBusiness = async (req: Request, res: Response) => {
 
     await user.save();
 
-    const maxAge = 90 * 24 * 60 * 60 * 1000;
-    const token = createJWT(user._id, maxAge);
-    res.cookie('jwt', token, {httpOnly:true})//store the token in a cookie but make it available only on the server
+   
     res.status(StatusCodes.OK).json({
       message: "Account signed in succesffuly",
       user,
@@ -122,10 +123,9 @@ export const login = async (req: Request, res: Response) => {
 
     const maxAge = 90 * 24 * 60 * 60 * 1000;
     const token = createJWT(user._id, maxAge);
-   res.cookie('jwt', token, {httpOnly:true})
+     res.cookie('jwt', token, {httpOnly:true})
     res.status(StatusCodes.OK).json({
       message: "Account signed in succesffuly",
-      authToken: token,
       user,
     });
   } catch (error) {
