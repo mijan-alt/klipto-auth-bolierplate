@@ -9,7 +9,7 @@ http://localhost:5000/api/v1/auth/add-business?userId=6615640c0496eecef773ed06
 
 
 /get single user
-http://localhost:5000/api/v1/user/single-user/6615640c0496eecef773ed06
+http://localhost:5000/api/v1/user/single-user/6628ec95ad2679493609ec25
 
 
 /authToken

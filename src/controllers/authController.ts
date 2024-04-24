@@ -47,8 +47,9 @@ export const signUp = async (req: Request, res: Response) => {
     const newUser = await userData.save();
     const maxAge = 90 * 24 * 60 * 60 * 1000;
     const token = createJWT(newUser._id, maxAge);
+    console.log("my token", token)
     res.cookie("jwt", token, { httpOnly: true }); //store the token in a cookie but make it available only on the server
-
+    // res.status(StatusCodes.OK).json({message:"Complete"})
     res.redirect(`http://localhost:3000/addBusiness?userId=${newUser._id}`);
   } catch (error) {
     console.log(error);

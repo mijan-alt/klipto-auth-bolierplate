@@ -5,6 +5,6 @@ import { authenticateUser } from "../middlewares/authChecker.js";
 
 const userRouter = Router()
 
-userRouter.route("/single-user/:id").get(authenticateUser, getSingleUser);
+userRouter.route("/single-user/:id").get(getSingleUser);
 
 export default userRouter
