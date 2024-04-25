@@ -50,7 +50,7 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         }, 5000);
     }
     catch (error) {
-        console.log(error);
+        res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Oops!, something went wrong" });
     }
 });
 exports.signUp = signUp;
