@@ -45,10 +45,12 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const token = (0, jwt_js_1.createJWT)(newUser._id, maxAge);
         console.log("my token", token);
         res.cookie("jwt", token, { httpOnly: true }); //store the token in a cookie but make it available only on the server
-        res.status(http_status_codes_1.StatusCodes.OK).json({ message: "Sign up successful" });
         setTimeout(() => {
             res.redirect(`http://localhost:3000/onboarding?userId=${newUser._id}`);
         }, 5000);
+        return res
+            .status(http_status_codes_1.StatusCodes.OK)
+            .json({ message: "Sign up successful" });
     }
     catch (error) {
         res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Oops!, something went wrong" });
@@ -83,11 +85,11 @@ const addBusiness = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         }
         user.businesses.push(newBusiness._id);
         yield user.save();
-        res.status(http_status_codes_1.StatusCodes.OK).json({
+        console.log("my createad business");
+        return res.status(http_status_codes_1.StatusCodes.OK).json({
             message: "Account signed in succesffuly",
             user,
         });
-        console.log("my createad business");
     }
     catch (error) {
         console.log(error);
@@ -111,7 +113,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const maxAge = 90 * 24 * 60 * 60 * 1000;
         const token = (0, jwt_js_1.createJWT)(user._id, maxAge);
         res.cookie('jwt', token, { httpOnly: true });
-        res.status(http_status_codes_1.StatusCodes.OK).json({
+        return res.status(http_status_codes_1.StatusCodes.OK).json({
             message: "Account signed in succesffuly",
             user,
         });
