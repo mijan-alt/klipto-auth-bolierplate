@@ -29,6 +29,7 @@ const clientUrl = process.env.CLIENT_URL;
 const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password, username } = req.body;
     try {
+        console.log("hitting the sign up");
         const user = yield User_js_1.default.findOne({ email });
         if (user) {
             throw new Error("Email Already Exist");

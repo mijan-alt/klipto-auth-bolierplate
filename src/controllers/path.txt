@@ -21,6 +21,7 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2MWUwYzEzZTMxNDJjOTExNmZmOGFlMiI
 
 https://enterbox-server.onrender.com/api/v1/auth/sign-up
 
+
 {
     "username":"mijan"
     "email":"mijanigoni@gmail.com"
@@ -31,3 +32,8 @@ https://enterbox-server.onrender.com/api/v1/auth/sign-up
 //google signup
 
 "https://enterbox-server.onrender.com/auth/google
+
+
+//log in
+https://enterbox-server.onrender.com/api/v1/auth/login
+{ email, password }

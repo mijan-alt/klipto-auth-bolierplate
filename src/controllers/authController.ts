@@ -32,6 +32,7 @@ export const signUp = async (req: Request, res: Response) => {
   const { email, password, username } = req.body;
 
   try {
+    console.log("hitting the sign up")
     const user: UserInterface | null = await User.findOne({ email });
     if (user) {
       throw new Error("Email Already Exist");
