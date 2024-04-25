@@ -44,8 +44,10 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const token = (0, jwt_js_1.createJWT)(newUser._id, maxAge);
         console.log("my token", token);
         res.cookie("jwt", token, { httpOnly: true }); //store the token in a cookie but make it available only on the server
-        // res.status(StatusCodes.OK).json({message:"Complete"})
-        res.redirect(`http://localhost:3000/addBusiness?userId=${newUser._id}`);
+        res.status(http_status_codes_1.StatusCodes.OK).json({ message: "Sign up successful" });
+        setTimeout(() => {
+            res.redirect(`http://localhost:3000/onboarding?userId=${newUser._id}`);
+        }, 5000);
     }
     catch (error) {
         console.log(error);
