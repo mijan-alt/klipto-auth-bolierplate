@@ -56,7 +56,7 @@ export const signUp = async (req: Request, res: Response) => {
     }, 5000)
     
   } catch (error) {
-    console.log(error);
+     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message:"Oops!, something went wrong"})
   }
 };
 
