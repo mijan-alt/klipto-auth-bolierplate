@@ -23,8 +23,8 @@ https://enterbox-server.onrender.com/api/v1/auth/sign-up
 
 
 {
-    "username":"mijan"
-    "email":"mijanigoni@gmail.com"
+    "username":"mijan",
+    "email":"awajimijan25@gmail.com",
     "password":"MIjan@tech"
 }
 

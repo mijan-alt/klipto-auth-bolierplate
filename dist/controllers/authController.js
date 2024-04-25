@@ -32,7 +32,8 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         console.log("hitting the sign up");
         const user = yield User_js_1.default.findOne({ email });
         if (user) {
-            throw new Error("Email Already Exist");
+            res.status(409).json({ message: "Email Already exist" });
+            return;
         }
         const userData = new User_js_1.default({
             email,

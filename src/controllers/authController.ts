@@ -34,8 +34,10 @@ export const signUp = async (req: Request, res: Response) => {
   try {
     console.log("hitting the sign up")
     const user: UserInterface | null = await User.findOne({ email });
+
     if (user) {
-      throw new Error("Email Already Exist");
+      res.status(409).json({ message: "Email Already exist" })
+      return
     }
 
     const userData: UserInterface = new User({
