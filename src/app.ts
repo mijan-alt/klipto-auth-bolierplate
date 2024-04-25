@@ -24,6 +24,18 @@ const app:Express = express();
 config()
 
 // Define a custom interface extending express.User
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5000",
+      "http://localhost:3000",
+      "http://localhost:3001",
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+    allowedHeaders: ["Authorization", "Content-Type"],
+  })
+);
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -89,14 +101,7 @@ passport.use(
   )
 );
 
-app.use(
-  cors({
-    origin: ["http://localhost:5000"],
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-    allowedHeaders:["Authorization", "Content-Type"]
-  }) 
-);
+
 app.use(cookieParser());
 app.use(express.json());
 
