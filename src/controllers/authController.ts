@@ -52,12 +52,10 @@ export const signUp = async (req: Request, res: Response) => {
     res.cookie("jwt", token, { httpOnly: true }); //store the token in a cookie but make it available only on the server
    
 
-    setTimeout(() => {
-       res.redirect(`http://localhost:3000/onboarding?userId=${newUser._id}`);
-    }, 5000)
-        return res
-          .status(StatusCodes.OK)
-          .json({ message: "Sign up successful" });
+    // setTimeout(() => {
+    //    res.redirect(`http://localhost:3000/onboarding?userId=${newUser._id}`);
+    // }, 5000)
+       res.status(StatusCodes.OK).json({ message: "Sign up successful" });
   } catch (error) {
      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message:"Oops!, something went wrong"})
   }

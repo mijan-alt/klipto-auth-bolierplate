@@ -45,12 +45,10 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const token = (0, jwt_js_1.createJWT)(newUser._id, maxAge);
         console.log("my token", token);
         res.cookie("jwt", token, { httpOnly: true }); //store the token in a cookie but make it available only on the server
-        setTimeout(() => {
-            res.redirect(`http://localhost:3000/onboarding?userId=${newUser._id}`);
-        }, 5000);
-        return res
-            .status(http_status_codes_1.StatusCodes.OK)
-            .json({ message: "Sign up successful" });
+        // setTimeout(() => {
+        //    res.redirect(`http://localhost:3000/onboarding?userId=${newUser._id}`);
+        // }, 5000)
+        res.status(http_status_codes_1.StatusCodes.OK).json({ message: "Sign up successful" });
     }
     catch (error) {
         res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Oops!, something went wrong" });
