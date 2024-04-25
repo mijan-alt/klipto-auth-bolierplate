@@ -51,11 +51,13 @@ export const signUp = async (req: Request, res: Response) => {
     console.log("my token", token)
     res.cookie("jwt", token, { httpOnly: true }); //store the token in a cookie but make it available only on the server
    
-    res.status(StatusCodes.OK).json({ message: "Sign up successful" })
+
     setTimeout(() => {
        res.redirect(`http://localhost:3000/onboarding?userId=${newUser._id}`);
     }, 5000)
-    
+        return res
+          .status(StatusCodes.OK)
+          .json({ message: "Sign up successful" });
   } catch (error) {
      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message:"Oops!, something went wrong"})
   }
@@ -97,12 +99,12 @@ export const addBusiness = async (req: Request, res: Response) => {
     await user.save();
 
    
-    res.status(StatusCodes.OK).json({
+    console.log("my createad business");
+   return res.status(StatusCodes.OK).json({
       message: "Account signed in succesffuly",
       user,
     });
 
-    console.log("my createad business");
   } catch (error) {
     console.log(error);
     res
@@ -130,7 +132,7 @@ export const login = async (req: Request, res: Response) => {
     const maxAge = 90 * 24 * 60 * 60 * 1000;
     const token = createJWT(user._id, maxAge);
      res.cookie('jwt', token, {httpOnly:true})
-    res.status(StatusCodes.OK).json({
+  return  res.status(StatusCodes.OK).json({
       message: "Account signed in succesffuly",
       user,
     });
