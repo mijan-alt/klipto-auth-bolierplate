@@ -39,4 +39,7 @@ const newAuthChecker = (
   }
 };
 
-export { newAuthChecker };
+export {
+  newAuthChecker
+};
+

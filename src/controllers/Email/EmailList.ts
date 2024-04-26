@@ -6,6 +6,13 @@ const CreateEmailList: Function = (req: Request, res: Response, next: NextFuncti
     
     const userid = req.user;
 
-    const activeUser = User.find({userid});
+    const activeUser = User.findOne({ id: userid });
+    
+    if (!activeUser) {
+        throw new UnAuthenticatedError();
+    }
+
+    
+
 
 }
