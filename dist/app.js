@@ -27,6 +27,16 @@ const User_js_1 = __importDefault(require("./Models/User.js"));
 const app = (0, express_1.default)();
 (0, dotenv_1.config)();
 // Define a custom interface extending express.User
+app.use((0, cors_1.default)({
+    origin: [
+        "http://localhost:5000",
+        "http://localhost:3000",
+        "http://localhost:3001",
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+    allowedHeaders: ["Authorization", "Content-Type"],
+}));
 app.use(body_parser_1.default.urlencoded({ extended: false }));
 app.use((0, express_session_1.default)({
     secret: "keyboard cat",
@@ -74,12 +84,6 @@ passport_1.default.use(new passport_google_oauth20_1.default({
         return done(error, null);
     }
 })));
-app.use((0, cors_1.default)({
-    origin: ["http://localhost:5000"],
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-    allowedHeaders: ["Authorization", "Content-Type"]
-}));
 app.use((0, cookie_parser_1.default)());
 app.use(express_1.default.json());
 app.get('/auth/google', passport_1.default.authenticate("google", {
