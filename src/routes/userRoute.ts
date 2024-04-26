@@ -1,9 +1,9 @@
 import { getSingleUser } from "../controllers/Auth/userController.ts";
 import { Router } from "express";
-import { authenticateUser } from "../middlewares/authChecker.ts";
+import { newAuthChecker } from "../middlewares/";
 
 const userRouter = Router();
 
-userRouter.route("/single-user/:id").get(getSingleUser);
+userRouter.route("/single-user/:id").get(newAuthChecker, getSingleUser);
 
 export default userRouter;
