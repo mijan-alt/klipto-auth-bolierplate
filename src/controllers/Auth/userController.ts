@@ -1,9 +1,10 @@
-import User from "../Models/User.js";
-import express from 'express'
+import User from "../../Models/UserSchema.js";
+import express from "express";
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { isTokenValid } from "../utils/jwt.js";
+import { isTokenValid } from "../../utils/jwt.js";
 import { JwtPayload } from "jsonwebtoken";
+
 export const getSingleUser = async (req: Request, res: Response) => {
   const id = req.params.id;
 
@@ -11,19 +12,20 @@ export const getSingleUser = async (req: Request, res: Response) => {
     //extract token from cookies
 
     const token = req.cookies.jwt;
-    
+
     //verify the token
 
-    const decodedToken:any = isTokenValid(token)
-    
-    console.log("my decoded token", decodedToken)
+    const decodedToken: any = isTokenValid(token);
+
+    console.log("my decoded token", decodedToken);
 
     if (decodedToken.id !== id) {
-      return res.status(StatusCodes.UNAUTHORIZED).json({ message: "Unauthorized access" })
-      
+      return res
+        .status(StatusCodes.UNAUTHORIZED)
+        .json({ message: "Unauthorized access" });
     }
-    
-    const user = await User.findById(id)
+
+    const user = await User.findById(id);
 
     if (!user) {
       // Send 404 Not Found if user is not found
@@ -41,7 +43,7 @@ export const getSingleUser = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error(error);
-   
+
     res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json({ message: "Oops there was an error" });

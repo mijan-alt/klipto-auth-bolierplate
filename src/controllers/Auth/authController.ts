@@ -1,32 +1,33 @@
-import User from "../Models/User.js";
+import User from "../../Models/UserSchema.js";
 import { StatusCodes } from "http-status-codes";
 import { Express, Request, Response } from "express";
-import { UserInterface } from "../Interface.js";
+import { UserInterface } from "../../interfaces/userAuthInterface.js";
 import jwt from "jsonwebtoken";
-import { createJWT } from "../utils/jwt.js";
+import { createJWT } from "../../utils/jwt.js";
 import bcrypt from "bcrypt";
 import { config } from "dotenv";
-import UnAuthenticatedError from "../errors/UnAuthenticated.js";
 import fs from "fs";
 import path from "path";
 import ejs from "ejs";
-import { sendMails } from "../utils/sendEmail.js";
-import { isTokenValid } from "../utils/jwt.js";
+import { sendMails } from "../../utils/sendEmail.js";
+import { isTokenValid } from "../../utils/jwt.js";
 import crypto from "crypto";
-import { Business } from "../Models/Business.js";
-import { BusinessInterface } from "../Interface.js";
-import BadRequestError from "../errors/BadRequest.js";
-import passport from 'passport'
-import GoogleStrategy from 'passport-google-oidc'
-
-
-
+import { Business } from "../../Models/BusinessSchema.js";
+import { BusinessInterface } from "../../interfaces/userAuthInterface.js";
+import {
+  ValidationError,
+  UnAuthenticatedError,
+  NotfoundError,
+  BadRequestError,
+} from "../../errors/index.js";
+import passport from "passport";
+import GoogleStrategy from "passport-google-oidc";
 
 config();
+
+
 const localUrl = process.env.BASE_SERVER_URL;
 const clientUrl = process.env.CLIENT_URL;
-
-
 
 export const signUp = async (req: Request, res: Response) => {
   const { email, password, username } = req.body;
@@ -47,8 +48,8 @@ export const signUp = async (req: Request, res: Response) => {
     const newUser = await userData.save();
     const maxAge = 90 * 24 * 60 * 60 * 1000;
     const token = createJWT(newUser._id, maxAge);
-    console.log("my token", token)
-    res.cookie("jwt", token, { httpOnly: true }); //store the token in a cookie but make it available only on the server
+    console.log("my token", token);
+    res.cookie("uToken", token, { httpOnly: true }); //store the token in a cookie but make it available only on the server
     // res.status(StatusCodes.OK).json({message:"Complete"})
     res.redirect(`http://localhost:3000/addBusiness?userId=${newUser._id}`);
   } catch (error) {
@@ -91,7 +92,6 @@ export const addBusiness = async (req: Request, res: Response) => {
 
     await user.save();
 
-   
     res.status(StatusCodes.OK).json({
       message: "Account signed in succesffuly",
       user,
@@ -124,7 +124,7 @@ export const login = async (req: Request, res: Response) => {
 
     const maxAge = 90 * 24 * 60 * 60 * 1000;
     const token = createJWT(user._id, maxAge);
-     res.cookie('jwt', token, {httpOnly:true})
+    res.cookie("uToken", token, { httpOnly: true });
     res.status(StatusCodes.OK).json({
       message: "Account signed in succesffuly",
       user,
@@ -151,7 +151,7 @@ export const forgotPassord = async (req: Request, res: Response) => {
   await user.save();
 
   console.log(resetToken);
-  const resetUrl = `${localUrl}/api/v1/users/resetPassword/${resetToken}`;
+  const resetUrl = `${localUrl}/api/v1/auth/reset-password/${resetToken}`;
   const templatePath = path.join(__dirname, "../views/forgotpassword.ejs");
   const renderHtml = await ejs.renderFile(
     templatePath,
@@ -221,7 +221,7 @@ export const validatePasswordResetToken = async (
   }
 };
 
-export const resetPassword = async (req: Request, res: Response) => {
+export const updatePassword = async (req: Request, res: Response) => {
   const { token } = req.params;
   const { newPassword } = req.body;
 
@@ -268,13 +268,13 @@ export const resetPassword = async (req: Request, res: Response) => {
   }
 };
 
-
 export const logout = async (req: Request, res: Response) => {
-try {
-  res.clearCookie('jwt')
-  res.status(StatusCodes.OK).json({message:'User signed out succesffuy'})
-} catch (error) {
-  return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({mesage:"Oops, there was an error signing out"})
-}
-
-}
+  try {
+    res.clearCookie("uToken");
+    res.status(StatusCodes.OK).json({ message: "User signed out succesffuy" });
+  } catch (error) {
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ mesage: "Oops, there was an error signing out" });
+  }
+};

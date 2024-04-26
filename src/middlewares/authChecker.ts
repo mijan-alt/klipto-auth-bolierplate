@@ -1,7 +1,7 @@
-import { isTokenValid } from "../utils/jwt.js";
+import { isTokenValid } from "../utils/jwt.ts";
 import { Express, Request, Response, NextFunction } from "express";
-import UnAuthenticatedError from "../errors/UnAuthenticated.js";
-import User from "../Models/User.js";
+import UnAuthenticatedError from "../errors/UnAuthenticated.ts";
+import User from "../Models/UserSchema.ts";
 
 export const authenticateUser = async (
   req: Request,
@@ -14,14 +14,13 @@ export const authenticateUser = async (
 
   const authHeader = req.headers.authorization;
 
-
   if (!authHeader || authHeader.startsWith("Bearer ")) {
-    throw new UnAuthenticatedError("Authentication Token is missing")
+    throw new UnAuthenticatedError("Authentication Token is missing");
   }
-  console.log("my auth header", authHeader)
-  
-  token = authHeader?.split(" ")[1]
-  console.log("my token", token)
+  console.log("my auth header", authHeader);
+
+  token = authHeader?.split(" ")[1];
+  console.log("my token", token);
 
   if (!token) {
     throw new UnAuthenticatedError("Authentication is invalid");

@@ -1,27 +1,22 @@
-
 import { Express } from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import authRouter from "./routes/authRoute.js";
-import { connectDb } from "./db/connectDb.js";
+import authRouter from "./routes/authRoute.ts";
+import { connectDb } from "./db/connectDb.ts";
 import bodyParser from "body-parser";
-import express from 'express'
-import userRouter from "./routes/userRoute.js";
+import express from "express";
+import userRouter from "./routes/userRoute.ts";
 import session from "express-session";
 import passport from "passport";
-import GoogleStrategy from 'passport-google-oauth20'
+import GoogleStrategy from "passport-google-oauth20";
 import { config } from "dotenv";
-import User from "./Models/User.js";
+import User from "./Models/UserSchema.ts";
 import { Request, Response } from "express";
-import { UserInterface } from "./Interface.js";
+import { UserInterface } from "./interfaces/userAuthInterface.ts";
 
+const app: Express = express();
 
-
-
-
-const app:Express = express();
-
-config()
+config();
 
 // Define a custom interface extending express.User
 
@@ -34,22 +29,21 @@ app.use(
     saveUninitialized: true,
   })
 );
-passport.serializeUser((user:any, done) => {
-  done(null, user.id)
-})
+passport.serializeUser((user: any, done) => {
+  done(null, user.id);
+});
 
 passport.deserializeUser(async (id, done) => {
   try {
-    const user = await User.findById(id)
-    done(null, user)
+    const user = await User.findById(id);
+    done(null, user);
   } catch (error) {
-     done(error, null)
+    done(error, null);
   }
-})
+});
 
-app.use(passport.initialize())
-app.use(passport.session())
-
+app.use(passport.initialize());
+app.use(passport.session());
 
 passport.use(
   new GoogleStrategy(
@@ -77,8 +71,8 @@ passport.use(
           user = await User.create({
             googleId: profile.id,
             username: profile.displayName,
-            email: profile.emails[0].value, 
-            image:profile.photos[0].value
+            email: profile.emails[0].value,
+            image: profile.photos[0].value,
           });
         }
         return done(null, user);
@@ -94,36 +88,35 @@ app.use(
     origin: ["http://localhost:5000"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
-    allowedHeaders:["Authorization", "Content-Type"]
-  }) 
+    allowedHeaders: ["Authorization", "Content-Type"],
+  })
 );
 app.use(cookieParser());
 app.use(express.json());
 
-app.get('/auth/google', passport.authenticate("google", {
-  scope: ["profile", "email"],
-}))
+app.get(
+  "/auth/google",
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+  })
+);
 
-app.get( 
+app.get(
   "/auth/google/callback",
   passport.authenticate("google", {
     failureRedirect: "http://localhost:3000", // Redirect to a success route
-  }), (req: Request, res: Response) => {
-    console.log(req)
+  }),
+  (req: Request, res: Response) => {
+    console.log(req);
     if (req.user) {
-      const { user } = req
-       res.redirect(`http://localhost:3000/addBusiness`);
-      }
-     
-}
-    
-  
+      const { user } = req;
+      res.redirect(`http://localhost:3000/addBusiness`);
+    }
+  }
 );
-
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user", userRouter);
-console.log("Thank you");
-console.log("I am that I am");
+
 
 connectDb(app);

@@ -1,26 +1,28 @@
 import { Router } from "express";
-import { addBusiness } from "../controllers/authController.js";
-
+import { addBusiness } from "../controllers/Auth/authController.ts";
 
 import {
-    login,
-    signUp,
-forgotPassord, 
- validatePasswordResetToken,
-  resetPassword,
-} from "../controllers/authController.js";
+  login,
+  signUp,
+  forgotPassord,
+  validatePasswordResetToken,
+  updatePassword,
+} from "../controllers/Auth/authController.js";
 
 const authRouter = Router();
 
+
+// Auth route
 authRouter.route("/sign-up").post(signUp);
 authRouter.route("/login").post(login);
 authRouter.route("/forgot-password").post(forgotPassord);
-authRouter.route("/reset-password:token").post(resetPassword);
 authRouter
-  .route("/validate-reset-token:token")
-  .post(validatePasswordResetToken);
+.route("/validate-reset-token:token")
+.post(validatePasswordResetToken);
+authRouter.route("/reset-password:token").post(updatePassword);
+
+
+//Onboarding route
 authRouter.route("/add-business").post(addBusiness);
-
-
 
 export default authRouter;

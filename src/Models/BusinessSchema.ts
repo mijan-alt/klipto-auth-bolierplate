@@ -1,6 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { BusinessInterface } from "../Interface";
-
+import { BusinessInterface } from "../interfaces/userAuthInterface";
 
 const businessSchema = new mongoose.Schema<BusinessInterface>({
   businessName: { type: String, required: true },
@@ -10,4 +9,7 @@ const businessSchema = new mongoose.Schema<BusinessInterface>({
   userId: { type: Schema.Types.ObjectId, required: true },
 });
 
-export const Business = mongoose.model<BusinessInterface>("Business", businessSchema);
+export const Business = mongoose.model<BusinessInterface>(
+  "Business",
+  businessSchema
+);
