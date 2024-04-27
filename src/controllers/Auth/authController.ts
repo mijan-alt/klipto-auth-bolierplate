@@ -78,12 +78,11 @@ export const addBusiness = async (req: Request, res: Response) => {
       userId: userId,
     };
     //create a new business
-    const newBusiness: BusinessInterface = new Business(businessData);
+     const newBusiness: BusinessInterface = new Business(businessData);
 
-    await newBusiness.save();
-
-
-    await user.save();
+     await newBusiness.save();
+     user.business=newBusiness._id
+     await user.save();
 
     res.status(StatusCodes.OK).json({
       message: "Account signed in succesffuly",
@@ -107,6 +106,7 @@ export const login = async (req: Request, res: Response) => {
 
     if (!user) {
       res.status(StatusCodes.NOT_FOUND).json({ message: "User not found" });
+      return
     }
 
     const isPasswordCorrect = await user.comparePassword(password);
@@ -135,6 +135,7 @@ export const forgotPassord = async (req: Request, res: Response) => {
   if (!user) {
     console.log("User does not exit");
     res.status(StatusCodes.NOT_FOUND).json({ message: "User not found" });
+    return
   }
 
   const resetToken = user.createResetPasswordToken();
@@ -145,7 +146,10 @@ export const forgotPassord = async (req: Request, res: Response) => {
 
   console.log(resetToken);
   const resetUrl = `${localUrl}/api/v1/auth/verify/${resetToken}`;
-  const templatePath = path.join(__dirname, "../views/forgotpassword.ejs");
+
+  
+
+  const templatePath = path.join(process.cwd(), "/src/views/forgotpassword.ejs");
   const renderHtml = await ejs.renderFile(
     templatePath,
     {
@@ -174,12 +178,12 @@ export const forgotPassord = async (req: Request, res: Response) => {
 
     user.save();
     res.status(StatusCodes.REQUEST_TIMEOUT).json({
-      message: "There was an error sending password reset email. Try again",
+      message: "There was an error sending password reset email. Try again ",
     });
   }
 };
 
-export const validatePasswordResetToken = async (
+export const verifyToken= async (
   req: Request,
   res: Response
 ) => {

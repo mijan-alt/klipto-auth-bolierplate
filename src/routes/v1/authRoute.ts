@@ -5,7 +5,7 @@ import {
   login,
   signUp,
   forgotPassord,
-  validatePasswordResetToken,
+  verifyToken,
   updatePassword,
 } from "../../controllers/Auth/authController.ts";
 
@@ -16,9 +16,9 @@ authRouter.route("/sign-up").post(signUp);
 authRouter.route("/login").post(login);
 authRouter.route("/forgot-password").post(forgotPassord);
 authRouter
-  .route("/validate-reset-token:token")
-  .post(validatePasswordResetToken);
-authRouter.route("/reset-password:token").post(updatePassword);
+  .route("/verify/:token")
+  .post(verifyToken);
+authRouter.route("/reset-password/:token").post(updatePassword);
 
 //Onboarding route
 authRouter.route("/add-business").post(addBusiness);
