@@ -1,3 +1,3 @@
-import newAuthChecker from "./newAuthChecker";
+import { newAuthChecker } from "./newAuthChecker";
 
 export { newAuthChecker };

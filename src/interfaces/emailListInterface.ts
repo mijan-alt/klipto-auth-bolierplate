@@ -7,7 +7,7 @@ interface EmailListInterface extends Document {
     listCategory: string;
     listStatus: string;
     listData: object[];
-    listBusiness: Types.ObjectId;
+    listBusinessId: Types.ObjectId;
 }
 
 export {

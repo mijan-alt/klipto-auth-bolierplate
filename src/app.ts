@@ -1,11 +1,11 @@
 import { Express, Request, Response } from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import authRouter from "./routes/authRoute.ts";
+import authRouter from "./routes/v1/authRoute.ts";
 import { connectDb } from "./db/connectDb.ts";
 import bodyParser from "body-parser";
 import express from "express";
-import userRouter from "./routes/userRoute.ts";
+import userRouter from "./routes/v1/userRoute.ts";
 import session from "express-session";
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";

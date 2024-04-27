@@ -4,28 +4,20 @@ import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { isTokenValid } from "../../utils/jwt.ts";
 import { JwtPayload } from "jsonwebtoken";
+import { UnAuthenticatedError } from "../../errors";
 
-export const getSingleUser = async (req: Request, res: Response) => {
+export const getActiveUser = async (req: Request, res: Response) => {
   const id = req.params.id;
 
   try {
-    //extract token from cookies
 
-    const token = req.cookies.jwt;
-
-    //verify the token
-
-    const decodedToken: any = isTokenValid(token);
-
-    console.log("my decoded token", decodedToken);
-
-    if (decodedToken.id !== id) {
-      return res
-        .status(StatusCodes.UNAUTHORIZED)
-        .json({ message: "Unauthorized access" });
+    if (!req.user) {
+      throw new UnAuthenticatedError("User is not verified");
     }
 
-    const user = await User.findById(id);
+    const userid = req.user;
+
+    const user = await User.findById(userid);
 
     if (!user) {
       // Send 404 Not Found if user is not found
