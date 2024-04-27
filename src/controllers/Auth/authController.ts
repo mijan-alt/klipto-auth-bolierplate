@@ -29,7 +29,7 @@ const localUrl = process.env.BASE_SERVER_URL;
 const clientUrl = process.env.CLIENT_URL;
 
 export const signUp = async (req: Request, res: Response) => {
-  const { email, password, username } = req.body;
+  const { email, password, username, imageurl } = req.body;
 
   try {
     const user: UserInterface | null = await User.findOne({ email });
@@ -41,6 +41,7 @@ export const signUp = async (req: Request, res: Response) => {
       email,
       password,
       username,
+      imageurl
     });
 
     // Save the user data to the database

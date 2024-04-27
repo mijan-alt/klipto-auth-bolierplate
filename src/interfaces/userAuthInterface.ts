@@ -10,7 +10,7 @@ interface UserInterface extends Document {
   passwordResetTokenExpire?: Date;
   googleId: string;
   business: Types.ObjectId;
-  image?: string;
+  imageurl?: string;
 }
 
 interface BusinessInterface extends Document {
