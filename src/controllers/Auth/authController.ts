@@ -188,6 +188,7 @@ export const verifyToken= async (
   res: Response
 ) => {
   const { token } = req.params;
+   const clientURL = process.env.CLIENT_URL;
 
   try {
     // Encrypt the incoming token
@@ -203,13 +204,11 @@ export const verifyToken= async (
     });
 
     if (!user) {
-      return res
-        .status(StatusCodes.NON_AUTHORITATIVE_INFORMATION)
-        .json({ message: "Token is invalid or expired" });
+        return res.redirect(`${clientURL}/auth/recover`);
     }
 
     // If token is valid, redirect to client-side password reset form
-    const clientURL = process.env.CLIENT_URL;
+   
     return res.redirect(`${clientURL}/reset-password/${token}`);
   } catch (error) {
     res
