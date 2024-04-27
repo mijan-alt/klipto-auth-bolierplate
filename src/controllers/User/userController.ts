@@ -27,7 +27,7 @@ export const getActiveUser = async (req: Request, res: Response) => {
     }
 
     // Populate the 'businesses' field
-    const populatedUser = await User.findById(id).populate("businesses");
+    const populatedUser = await User.findById(id).populate("business");
 
     // Send the populated user object
     res.status(StatusCodes.OK).json({

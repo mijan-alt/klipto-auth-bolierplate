@@ -15,5 +15,4 @@ const businessSchema = new mongoose.Schema<BusinessInterface>(
   }
 );
 
-export const Business = mongoose.model<BusinessInterface>( "Business",businessSchema
-);
+export const Business = mongoose.model<BusinessInterface>( "Business", businessSchema);

@@ -39,7 +39,7 @@ const UserSchema = new mongoose.Schema<UserInterface>(
 UserSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     // If password is not modified, proceed to the next middleware
-    return next();
+    return next(); 
   }
 
   try {

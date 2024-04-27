@@ -61,3 +61,7 @@ http://localhost:5000/api/v1/auth/reset-password/c959cb8c23f35ba844ef54af58b51aa
 
 
 
+http://localhost:5000/api/v1/user/active-user/:id
+
+
+
