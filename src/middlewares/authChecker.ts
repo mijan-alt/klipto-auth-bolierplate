@@ -1,6 +1,6 @@
 import { isTokenValid } from "../utils/jwt.ts";
 import { Express, Request, Response, NextFunction } from "express";
-import UnAuthenticatedError from "../errors/UnAuthenticated.ts";
+import UnAuthenticatedError from "../errors/UnAuthenticatedError.ts";
 import User from "../Models/UserSchema.ts";
 
 export const authenticateUser = async (

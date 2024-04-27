@@ -1,16 +1,14 @@
 import { Document } from "mongodb";
 import { Types } from "mongoose";
 
-interface createEmailListInterface extends Document {
+interface EmailListInterface extends Document {
     listName: string;
     listDescription: string;
     listCategory: string;
     listStatus: string;
     listData: object[];
-    listBusiness: Types.ObjectId;
+    listBusinessId: Types.ObjectId;
 }
 
-export {
-    createEmailListInterface
-};
+export { EmailListInterface };
 

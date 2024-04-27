@@ -1,32 +1,39 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
-import { UserInterface } from "../interfaces/userAuthInterface";
 
-const UserSchema = new mongoose.Schema<UserInterface>({
-  username: {
-    type: String,
-    required: true,
-  },
+const UserSchema = new mongoose.Schema<UserInterface>(
+  {
+    username: {
+      type: String,
+      required: true,
+    },
 
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  image: {
-    type: String,
-  },
-  googleId: String,
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    image: {
+      type: String,
+    },
+    googleId: String,
 
-  password: {
-    type: String,
-  },
-  businesses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Business" }],
+    password: {
+      type: String,
+    },
 
-  passwordResetToken: String,
-  passwordResetTokenExpire: Date,
-});
+    business: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Business",
+    },
+    passwordResetToken: String,
+    passwordResetTokenExpire: Date,
+  },
+  {
+    timestamps: true,
+  }
+);
 
 UserSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
@@ -36,7 +43,7 @@ UserSchema.pre("save", async function (next) {
 
   try {
     const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
+    this.password = bcrypt.hash(this.password, salt);
     next();
   } catch (error: any) {
     next(error);
