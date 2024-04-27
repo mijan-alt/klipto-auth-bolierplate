@@ -1,8 +1,8 @@
-import User from "../../Models/UserSchema.js";
+import User from "../../Models/UserSchema.ts";
 import express from "express";
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { isTokenValid } from "../../utils/jwt.js";
+import { isTokenValid } from "../../utils/jwt.ts";
 import { JwtPayload } from "jsonwebtoken";
 
 export const getSingleUser = async (req: Request, res: Response) => {

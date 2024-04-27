@@ -1,27 +1,27 @@
-import User from "../../Models/UserSchema.js";
+import User from "../../Models/UserSchema.ts";
 import { StatusCodes } from "http-status-codes";
 import { Express, Request, Response } from "express";
-import { UserInterface } from "../../interfaces/userAuthInterface.js";
+import { UserInterface } from "../../interfaces/userAuthInterface.ts";
 import jwt from "jsonwebtoken";
-import { createJWT } from "../../utils/jwt.js";
+import { createJWT } from "../../utils/jwt.ts";
 import bcrypt from "bcrypt";
 import { config } from "dotenv";
 import fs from "fs";
 import path from "path";
 import ejs from "ejs";
-import { sendMails } from "../../utils/sendEmail.js";
+import { sendMails } from "../../utils/sendEmail.ts";
 import { isTokenValid } from "../../utils/jwt.js";
 import crypto from "crypto";
-import { Business } from "../../Models/BusinessSchema.js";
-import { BusinessInterface } from "../../interfaces/userAuthInterface.js";
+import { Business } from "../../Models/BusinessSchema.ts";
+import { BusinessInterface } from "../../interfaces/userAuthInterface.ts";
 import {
   ValidationError,
   UnAuthenticatedError,
   NotfoundError,
   BadRequestError,
-} from "../../errors/index.js";
-import passport from "passport";
-import GoogleStrategy from "passport-google-oidc";
+} from "../../errors/index.ts";
+
+
 
 config();
 
@@ -151,7 +151,7 @@ export const forgotPassord = async (req: Request, res: Response) => {
   await user.save();
 
   console.log(resetToken);
-  const resetUrl = `${localUrl}/api/v1/auth/reset-password/${resetToken}`;
+  const resetUrl = `${localUrl}/api/v1/auth/verify/${resetToken}`;
   const templatePath = path.join(__dirname, "../views/forgotpassword.ejs");
   const renderHtml = await ejs.renderFile(
     templatePath,

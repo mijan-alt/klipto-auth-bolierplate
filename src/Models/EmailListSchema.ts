@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { createEmailListInterface } from "../interfaces";
+import { EmailListInterface } from "../interfaces/emailListInterface";
 
 const BusinessEmailListData = new mongoose.Schema<EmailListInterface>({
   listName: {

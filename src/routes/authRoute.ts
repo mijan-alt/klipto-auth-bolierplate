@@ -7,7 +7,7 @@ import {
   forgotPassord,
   validatePasswordResetToken,
   updatePassword,
-} from "../controllers/Auth/authController.js";
+} from "../controllers/Auth/authController.ts";
 
 const authRouter = Router();
 
