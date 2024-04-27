@@ -1,8 +1,8 @@
-import User from "../../Models/UserSchema.js";
+import User from "../../Models/UserSchema.ts";
 import express from "express";
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { isTokenValid } from "../../utils/jwt.js";
+import { isTokenValid } from "../../utils/jwt.ts";
 import { JwtPayload } from "jsonwebtoken";
 import { UnAuthenticatedError } from "../../errors";
 
@@ -27,7 +27,7 @@ export const getActiveUser = async (req: Request, res: Response) => {
     }
 
     // Populate the 'businesses' field
-    const populatedUser = await User.findById(id).populate("businesses");
+    const populatedUser = await User.findById(id).populate("business");
 
     // Send the populated user object
     res.status(StatusCodes.OK).json({

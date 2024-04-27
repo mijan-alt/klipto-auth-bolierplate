@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
+import { UserInterface } from "../interfaces";
 
 const UserSchema = new mongoose.Schema<UserInterface>(
   {
@@ -14,7 +15,7 @@ const UserSchema = new mongoose.Schema<UserInterface>(
       required: true,
       unique: true,
     },
-    image: {
+    imageurl: {
       type: String,
     },
     googleId: String,
@@ -38,13 +39,14 @@ const UserSchema = new mongoose.Schema<UserInterface>(
 UserSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     // If password is not modified, proceed to the next middleware
-    return next();
+    return next(); 
   }
 
   try {
-    const salt = await bcrypt.genSalt(10);
-    this.password = bcrypt.hash(this.password, salt);
-    next();
+     const salt = await bcrypt.genSalt(10);
+     const hashedPassword = await bcrypt.hash(this.password, salt);
+     this.password = hashedPassword;
+     next();
   } catch (error: any) {
     next(error);
   }

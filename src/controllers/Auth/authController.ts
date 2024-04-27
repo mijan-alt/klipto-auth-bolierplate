@@ -1,27 +1,27 @@
-import User from "../../Models/UserSchema.js";
+import User from "../../Models/UserSchema.ts";
 import { StatusCodes } from "http-status-codes";
 import { Express, Request, Response } from "express";
-import { UserInterface } from "../../interfaces/userAuthInterface.js";
+import { UserInterface } from "../../interfaces/userAuthInterface.ts";
 import jwt from "jsonwebtoken";
-import { createJWT } from "../../utils/jwt.js";
+import { createJWT } from "../../utils/jwt.ts";
 import bcrypt from "bcrypt";
 import { config } from "dotenv";
 import fs from "fs";
 import path from "path";
 import ejs from "ejs";
-import { sendMails } from "../../utils/sendEmail.js";
+import { sendMails } from "../../utils/sendEmail.ts";
 import { isTokenValid } from "../../utils/jwt.js";
 import crypto from "crypto";
-import { Business } from "../../Models/BusinessSchema.js";
-import { BusinessInterface } from "../../interfaces/userAuthInterface.js";
+import { Business } from "../../Models/BusinessSchema.ts";
+import { BusinessInterface } from "../../interfaces/userAuthInterface.ts";
 import {
   ValidationError,
   UnAuthenticatedError,
   NotfoundError,
   BadRequestError,
-} from "../../errors/index.js";
-import passport from "passport";
-import GoogleStrategy from "passport-google-oidc";
+} from "../../errors/index.ts";
+
+
 
 config();
 
@@ -29,7 +29,7 @@ const localUrl = process.env.BASE_SERVER_URL;
 const clientUrl = process.env.CLIENT_URL;
 
 export const signUp = async (req: Request, res: Response) => {
-  const { email, password, username } = req.body;
+  const { email, password, username, imageurl } = req.body;
 
   try {
     const user: UserInterface | null = await User.findOne({ email });
@@ -41,6 +41,7 @@ export const signUp = async (req: Request, res: Response) => {
       email,
       password,
       username,
+      imageurl
     });
 
     // Save the user data to the database
@@ -78,18 +79,11 @@ export const addBusiness = async (req: Request, res: Response) => {
       userId: userId,
     };
     //create a new business
-    const newBusiness: BusinessInterface = new Business(businessData);
+     const newBusiness: BusinessInterface = new Business(businessData);
 
-    await newBusiness.save();
-
-    if (user.businesses.length >= 3) {
-      return res.status(400).json({
-        message: "User already has the maximum number of businesses (3).",
-      });
-    }
-    user.businesses.push(newBusiness._id);
-
-    await user.save();
+     await newBusiness.save();
+     user.business=newBusiness._id
+     await user.save();
 
     res.status(StatusCodes.OK).json({
       message: "Account signed in succesffuly",
@@ -113,6 +107,7 @@ export const login = async (req: Request, res: Response) => {
 
     if (!user) {
       res.status(StatusCodes.NOT_FOUND).json({ message: "User not found" });
+      return
     }
 
     const isPasswordCorrect = await user.comparePassword(password);
@@ -141,6 +136,7 @@ export const forgotPassord = async (req: Request, res: Response) => {
   if (!user) {
     console.log("User does not exit");
     res.status(StatusCodes.NOT_FOUND).json({ message: "User not found" });
+    return
   }
 
   const resetToken = user.createResetPasswordToken();
@@ -150,8 +146,11 @@ export const forgotPassord = async (req: Request, res: Response) => {
   await user.save();
 
   console.log(resetToken);
-  const resetUrl = `${localUrl}/api/v1/auth/reset-password/${resetToken}`;
-  const templatePath = path.join(__dirname, "../views/forgotpassword.ejs");
+  const resetUrl = `${localUrl}/api/v1/auth/verify/${resetToken}`;
+
+  
+
+  const templatePath = path.join(process.cwd(), "/src/views/forgotpassword.ejs");
   const renderHtml = await ejs.renderFile(
     templatePath,
     {
@@ -180,16 +179,17 @@ export const forgotPassord = async (req: Request, res: Response) => {
 
     user.save();
     res.status(StatusCodes.REQUEST_TIMEOUT).json({
-      message: "There was an error sending password reset email. Try again",
+      message: "There was an error sending password reset email. Try again ",
     });
   }
 };
 
-export const validatePasswordResetToken = async (
+export const verifyToken= async (
   req: Request,
   res: Response
 ) => {
   const { token } = req.params;
+   const clientURL = process.env.CLIENT_URL;
 
   try {
     // Encrypt the incoming token
@@ -205,13 +205,11 @@ export const validatePasswordResetToken = async (
     });
 
     if (!user) {
-      return res
-        .status(StatusCodes.NON_AUTHORITATIVE_INFORMATION)
-        .json({ message: "Token is invalid or expired" });
+        return res.redirect(`${clientURL}/auth/recover`);
     }
 
     // If token is valid, redirect to client-side password reset form
-    const clientURL = process.env.CLIENT_URL;
+   
     return res.redirect(`${clientURL}/reset-password/${token}`);
   } catch (error) {
     res

@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import { BusinessInterface } from "../interfaces";
 
 const businessSchema = new mongoose.Schema<BusinessInterface>(
   {
@@ -14,7 +15,4 @@ const businessSchema = new mongoose.Schema<BusinessInterface>(
   }
 );
 
-export const Business = mongoose.model<BusinessInterface>(
-  "Business",
-  businessSchema
-);
+export const Business = mongoose.model<BusinessInterface>( "Business", businessSchema);

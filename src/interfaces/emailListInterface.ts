@@ -10,5 +10,7 @@ interface EmailListInterface extends Document {
     listBusinessId: Types.ObjectId;
 }
 
-export { EmailListInterface };
+export {
+ EmailListInterface
+};
 
