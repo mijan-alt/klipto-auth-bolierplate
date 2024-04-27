@@ -6,17 +6,15 @@ import { connectDb } from "./db/connectDb.ts";
 import bodyParser from "body-parser";
 import express from "express";
 import userRouter from "./routes/v1/userRoute.ts";
+import emailingRouter from "./routes/v1/emailingRoute.ts";
 import session from "express-session";
 import passport from "passport";
 import GoogleStrategy from "passport-google-oauth20";
-import { config } from "dotenv";
 import User from "./Models/UserSchema.ts";
 import { Request, Response } from "express";
 import { UserInterface } from "./interfaces/userAuthInterface.ts";
 
 const app: Express = express();
-
-config();
 
 // Define a custom interface extending express.User
 app.use(
@@ -121,5 +119,9 @@ app.get(
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user", userRouter);
+
+
+//Business route for emailing
+app.use("/api/v1/biz/emailing/", emailingRouter);
 
 connectDb(app);
