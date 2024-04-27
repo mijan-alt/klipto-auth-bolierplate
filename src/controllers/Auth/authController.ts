@@ -82,12 +82,6 @@ export const addBusiness = async (req: Request, res: Response) => {
 
     await newBusiness.save();
 
-    if (user.businesses.length >= 3) {
-      return res.status(400).json({
-        message: "User already has the maximum number of businesses (3).",
-      });
-    }
-    user.businesses.push(newBusiness._id);
 
     await user.save();
 

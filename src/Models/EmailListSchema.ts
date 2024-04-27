@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { EmailListInterface } from "../interfaces/emailListInterface";
+import { EmailListInterface } from "../interfaces";
 
 const BusinessEmailListData = new mongoose.Schema<EmailListInterface>({
   listName: {
@@ -30,7 +30,4 @@ const BusinessEmailListData = new mongoose.Schema<EmailListInterface>({
   },
 });
 
-export const BusinessEmailList = mongoose.model(
-  "BusinessEmailList",
-  BusinessEmailListData
-);
+export const BusinessEmailList = mongoose.model("BusinessEmailList", BusinessEmailListData);
