@@ -1,6 +1,6 @@
-import { getActiveUser } from "../controllers/User/userController.ts";
+import { getActiveUser } from "../../controllers/User/userController.ts";
 import { Router } from "express";
-import { newAuthChecker } from "../middlewares/";
+import { newAuthChecker } from "../../middlewares/index.ts";
 
 const userRouter = Router();
 

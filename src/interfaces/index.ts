@@ -1,3 +1,4 @@
-import { createEmailListInterface } from "./emailListInterface";
+import { EmailListInterface } from "./emailListInterface";
+import { UserInterface, BusinessInterface } from "./userAuthInterface";
 
-export { createEmailListInterface };
+export { EmailListInterface, UserInterface, BusinessInterface };

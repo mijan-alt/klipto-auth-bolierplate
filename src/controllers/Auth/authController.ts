@@ -25,7 +25,6 @@ import GoogleStrategy from "passport-google-oidc";
 
 config();
 
-
 const localUrl = process.env.BASE_SERVER_URL;
 const clientUrl = process.env.CLIENT_URL;
 
