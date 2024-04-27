@@ -5,7 +5,7 @@
   "main": "./dist/app.js",
   "scripts": {
     "dev": "nodemon ./src/app.ts",
-    "build": "tsc && node ./dist/app.js"
+    "start": "node ./dist/app.js"
   },
   "keywords": [],
   "author": "",
