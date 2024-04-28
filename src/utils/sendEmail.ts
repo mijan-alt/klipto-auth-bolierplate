@@ -74,7 +74,7 @@ export const sendMails = async ({email,subject,html}:MailOptions) => {
       html:html
     }
 
-     await transporter.sendMail(mailOptions)
+    await transporter.sendMail(mailOptions)
   
   } catch (error) {
      return error
