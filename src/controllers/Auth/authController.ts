@@ -14,7 +14,6 @@ import { isTokenValid } from "../../utils/jwt.js";
 import crypto from "crypto";
 import { Business } from "../../Models/BusinessSchema.ts";
 import { BusinessInterface } from "../../interfaces/userAuthInterface.ts";
-
 import {
   ValidationError,
   UnAuthenticatedError,
@@ -29,9 +28,6 @@ const localUrl = process.env.BASE_SERVER_URL;
 const clientUrl = process.env.CLIENT_URL;
 
 export const signUp = async (req: Request, res: Response) => {
-  const { email, password, username, userdp } = req.body;
-  console.log("hitting sign up");
-
   const { email, password, username, imageurl } = req.body;
 
   try {
@@ -54,7 +50,6 @@ export const signUp = async (req: Request, res: Response) => {
 
     // Save the user data to the database
     const newUser = await userData.save();
-
     if (!newUser) {
       throw new BadRequestError("Unable to create user");
     }
@@ -85,9 +80,6 @@ export const signUp = async (req: Request, res: Response) => {
   }
 };
 
-
-
-
 export const addBusiness = async (req: Request, res: Response) => {
   const { businessName, businessEmail, businessCategory, businessBio } =
     req.body;
@@ -110,7 +102,6 @@ export const addBusiness = async (req: Request, res: Response) => {
       userId: userId,
     };
     //create a new business
-    const newBusiness: BusinessInterface = new Business(businessData);
     const newBusiness: BusinessInterface = new Business(businessData);
 
     await newBusiness.save();
@@ -167,7 +158,7 @@ export const login = async (req: Request, res: Response) => {
 export const forgotPassord = async (req: Request, res: Response) => {
   const { email } = req.body;
 
-  console.log('forgot password hit successfully')
+  console.log("forgot password hit successfully");
   const user: any = await User.findOne({ email });
 
   if (!user) {
@@ -190,10 +181,7 @@ export const forgotPassord = async (req: Request, res: Response) => {
     process.cwd(),
     "/src/views/forgotpassword.ejs"
   );
-  const templatePath = path.join(
-    process.cwd(),
-    "/src/views/forgotpassword.ejs"
-  );
+
   const renderHtml = await ejs.renderFile(
     templatePath,
     {
@@ -219,7 +207,7 @@ export const forgotPassord = async (req: Request, res: Response) => {
     user.passwordResetToken = undefined;
     user.passwordResetTokenExpire = undefined;
     //then we save these new values to the database
-     console.log(error, "error")
+    console.log(error, "error");
     user.save();
     res.status(StatusCodes.REQUEST_TIMEOUT).json({
       message: "There was an error sending password reset email. Try again ",
@@ -228,9 +216,7 @@ export const forgotPassord = async (req: Request, res: Response) => {
 };
 
 export const verifyToken = async (req: Request, res: Response) => {
-export const verifyToken = async (req: Request, res: Response) => {
   const { token } = req.params;
-  const clientURL = process.env.CLIENT_URL;
   const clientURL = process.env.CLIENT_URL;
 
   try {
@@ -252,7 +238,6 @@ export const verifyToken = async (req: Request, res: Response) => {
     }
 
     // If token is valid, redirect to client-side password reset form
-
 
     return res.redirect(`${clientURL}/reset-password/${token}`);
   } catch (error) {
