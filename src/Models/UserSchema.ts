@@ -15,7 +15,7 @@ const UserSchema = new mongoose.Schema<UserInterface>(
       required: true,
       unique: true,
     },
-    imageurl: {
+    userdp: {
       type: String,
     },
     googleId: String,
