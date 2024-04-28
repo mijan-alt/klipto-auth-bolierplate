@@ -46,6 +46,7 @@ export const signUp = async (req: Request, res: Response) => {
 
     // Save the user data to the database
     const newUser = await userData.save();
+
     if (!newUser) {
       throw new BadRequestError("Unable to create user");
     }
