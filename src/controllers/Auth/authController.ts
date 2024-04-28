@@ -28,7 +28,7 @@ const localUrl = process.env.BASE_SERVER_URL;
 const clientUrl = process.env.CLIENT_URL;
 
 export const signUp = async (req: Request, res: Response) => {
-  const { email, password, username, imageurl } = req.body;
+  const { email, password, username, userdp } = req.body;
 
   try {
     const user: UserInterface | null = await User.findOne({ email });
@@ -45,11 +45,11 @@ export const signUp = async (req: Request, res: Response) => {
       password,
       username,
       userdp,
-      imageurl,
     });
 
     // Save the user data to the database
     const newUser = await userData.save();
+    
     if (!newUser) {
       throw new BadRequestError("Unable to create user");
     }
