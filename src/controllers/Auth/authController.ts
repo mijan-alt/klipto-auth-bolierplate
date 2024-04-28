@@ -28,12 +28,14 @@ const localUrl = process.env.BASE_SERVER_URL;
 const clientUrl = process.env.CLIENT_URL;
 
 export const signUp = async (req: Request, res: Response) => {
+  const { email, password, username, userdp } = req.body;
   console.log("hitting sign up");
 
   const { email, password, username, imageurl } = req.body;
 
   try {
     const user: UserInterface | null = await User.findOne({ email });
+
     if (user) {
       // Email already exists
       return res
@@ -45,11 +47,16 @@ export const signUp = async (req: Request, res: Response) => {
       email,
       password,
       username,
+      userdp,
       imageurl,
     });
 
     // Save the user data to the database
     const newUser = await userData.save();
+    if (!newUser) {
+      throw new BadRequestError("Unable to create user");
+    }
+
     const maxAge = 90 * 24 * 60 * 60 * 1000;
     const token = createJWT(newUser._id, maxAge);
     console.log("my token", token);
@@ -102,7 +109,11 @@ export const addBusiness = async (req: Request, res: Response) => {
     };
     //create a new business
     const newBusiness: BusinessInterface = new Business(businessData);
+    const newBusiness: BusinessInterface = new Business(businessData);
 
+    await newBusiness.save();
+    user.business = newBusiness._id;
+    await user.save();
     await newBusiness.save();
     user.business = newBusiness._id;
     await user.save();
@@ -129,6 +140,7 @@ export const login = async (req: Request, res: Response) => {
 
     if (!user) {
       res.status(StatusCodes.NOT_FOUND).json({ message: "User not found" });
+      return;
       return;
     }
 
@@ -160,6 +172,7 @@ export const forgotPassord = async (req: Request, res: Response) => {
     console.log("User does not exit");
     res.status(StatusCodes.NOT_FOUND).json({ message: "User not found" });
     return;
+    return;
   }
 
   const resetToken = user.createResetPasswordToken();
@@ -171,6 +184,10 @@ export const forgotPassord = async (req: Request, res: Response) => {
   console.log(resetToken);
   const resetUrl = `${localUrl}/api/v1/auth/verify/${resetToken}`;
 
+  const templatePath = path.join(
+    process.cwd(),
+    "/src/views/forgotpassword.ejs"
+  );
   const templatePath = path.join(
     process.cwd(),
     "/src/views/forgotpassword.ejs"
@@ -209,7 +226,9 @@ export const forgotPassord = async (req: Request, res: Response) => {
 };
 
 export const verifyToken = async (req: Request, res: Response) => {
+export const verifyToken = async (req: Request, res: Response) => {
   const { token } = req.params;
+  const clientURL = process.env.CLIENT_URL;
   const clientURL = process.env.CLIENT_URL;
 
   try {
@@ -227,9 +246,11 @@ export const verifyToken = async (req: Request, res: Response) => {
 
     if (!user) {
       return res.redirect(`${clientURL}/auth/recover`);
+      return res.redirect(`${clientURL}/auth/recover`);
     }
 
     // If token is valid, redirect to client-side password reset form
+
 
     return res.redirect(`${clientURL}/reset-password/${token}`);
   } catch (error) {
