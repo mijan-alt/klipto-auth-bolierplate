@@ -219,4 +219,10 @@ const DeleteEmailList = async (
   }
 };
 
-export  { CreateEmailList, ReadAllEmailList, ReadSingleEmailList, UpdateEmailList, DeleteEmailList };
+export {
+  CreateEmailList,
+  ReadAllEmailList,
+  ReadSingleEmailList,
+  UpdateEmailList,
+  DeleteEmailList,
+};

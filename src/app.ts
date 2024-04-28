@@ -129,6 +129,6 @@ app.use("/api/v1/user", userRouter);
 
 
 //Business route for emailing
-app.use("/api/v1/biz/emailing/", emailingRouter);
+app.use("/api/v1/biz/emailing", emailingRouter);
 
 connectDb(app);
