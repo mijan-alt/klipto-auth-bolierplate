@@ -41,7 +41,7 @@ export const signUp = async (req: Request, res: Response) => {
   } = req.body;
 
   try {
-    const user: UserInterface | null = await User.findOne({ email });
+    const user = await User.findOne({ email });
 
     if (user) {
       // Email already exists
@@ -50,7 +50,7 @@ export const signUp = async (req: Request, res: Response) => {
         .json({ message: "Email Already Exists" });
     }
 
-    const data = { email, password, username, userdp };
+    const data = { email, password, username, imageurl };
 
     const userData = new User(data);
 
@@ -123,9 +123,7 @@ export const addBusiness = async (req: Request, res: Response) => {
     await newBusiness.save();
     user.business = newBusiness._id;
     await user.save();
-    await newBusiness.save();
-    user.business = newBusiness._id;
-    await user.save();
+  
 
     res.status(StatusCodes.OK).json({
       message: "Account signed in succesffuly",
