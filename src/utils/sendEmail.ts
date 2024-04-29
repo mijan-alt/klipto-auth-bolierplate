@@ -53,7 +53,7 @@ interface MailOptions {
 
 export const sendMails = async ({email,subject,html}:MailOptions) => {
   try {
-    const accessToken:any =await oAuth2Client.getAccessToken();
+    const accessToken:any=(await oAuth2Client.getAccessToken()) 
 
     const transporter = nodemailer.createTransport({
       service: 'gmail',

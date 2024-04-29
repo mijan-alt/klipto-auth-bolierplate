@@ -1,14 +1,14 @@
 import mongoose from "mongoose";
-import { Document } from "mongoose";
 import { Types } from "mongoose";
+import { Document } from "mongodb";
 
 interface UserInterface extends Document {
   username: string;
   email: string;
   password: string;
-  passwordResetToken?: String;
+  passwordResetToken: String | undefined;
   passwordResetTokenExpire?: Date;
-  googleId: string;
+  googleId?: string;
   business: Types.ObjectId;
   userdp?: string;
 }
