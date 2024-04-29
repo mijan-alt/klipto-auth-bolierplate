@@ -234,12 +234,11 @@ export const verifyToken = async (req: Request, res: Response) => {
 
     if (!user) {
       return res.redirect(`${clientURL}/auth/recover`);
-      return res.redirect(`${clientURL}/auth/recover`);
     }
 
     // If token is valid, redirect to client-side password reset form
 
-    return res.redirect(`${clientURL}/reset-password/${token}`);
+    return res.redirect(`${clientURL}/reset-password?${token}`);
   } catch (error) {
     res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
