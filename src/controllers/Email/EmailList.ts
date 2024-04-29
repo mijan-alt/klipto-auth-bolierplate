@@ -9,7 +9,7 @@ import { BusinessEmailList } from "../../Models/EmailListSchema";
 import { Business } from "../../Models/BusinessSchema";
 import { StatusCodes } from "http-status-codes";
 
-const CreateEmailList: Function = async (
+const CreateEmailList = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -24,7 +24,7 @@ const CreateEmailList: Function = async (
       throw new UnAuthenticatedError("You need to signin");
     }
 
-    const userBusiness = await Business.findById(activeUser.business.id);
+    const userBusiness = await Business.findById(activeUser.business);
 
     if (!userBusiness || userBusiness === null || undefined) {
       throw new UnAuthorizedError(
@@ -57,7 +57,7 @@ const CreateEmailList: Function = async (
   }
 };
 
-const ReadAllEmailList: Function = async (
+const ReadAllEmailList = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -71,7 +71,9 @@ const ReadAllEmailList: Function = async (
       throw new UnAuthenticatedError("You need to signin");
     }
 
-    const AllEmailList = await BusinessEmailList.find(activeUser.business.id);
+    const AllEmailList = await BusinessEmailList.find({
+      listBusiness: activeUser.business,
+    });
 
     if (!AllEmailList) {
       throw new UnAuthenticatedError("Email List is empty");
@@ -88,7 +90,40 @@ const ReadAllEmailList: Function = async (
   }
 };
 
-const UpdateEmailList: Function = async (
+const ReadSingleEmailList = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const userid = req.user;
+
+  const listid = req.params;
+
+  try {
+    const activeUser = await User.findById(userid);
+
+    if (!activeUser) {
+      throw new UnAuthenticatedError("You need to signin");
+    }
+
+    const SingleEmailList = await BusinessEmailList.findById(listid);
+
+    if (!SingleEmailList) {
+      throw new UnAuthenticatedError("Email List not found");
+    }
+
+    res.status(StatusCodes.OK).json({
+      data: SingleEmailList,
+      message: "Successfuly retrieved your email list data",
+    });
+  } catch (error) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      message: `Opps, unable to process this.`,
+    });
+  }
+};
+
+const UpdateEmailList = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -141,7 +176,7 @@ const UpdateEmailList: Function = async (
   }
 };
 
-const DeleteEmailList: Function = async (
+const DeleteEmailList = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -184,4 +219,10 @@ const DeleteEmailList: Function = async (
   }
 };
 
-export { CreateEmailList, ReadAllEmailList, UpdateEmailList, DeleteEmailList };
+export {
+  CreateEmailList,
+  ReadAllEmailList,
+  ReadSingleEmailList,
+  UpdateEmailList,
+  DeleteEmailList,
+};

@@ -1,4 +1,4 @@
-import { StatusCodes } from "http-status-codes"
+import { StatusCodes } from "http-status-codes";
 
 class UnAuthorizedError extends Error {
   statusCode: number;
@@ -7,7 +7,7 @@ class UnAuthorizedError extends Error {
   constructor(message: string) {
     super(message);
     this.error = message;
-    this.statusCode = StatusCodes.BAD_REQUEST;
+    this.statusCode = StatusCodes.UNAUTHORIZED;
     this.message = message;
   }
 }

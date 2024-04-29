@@ -6,6 +6,7 @@ import { connectDb } from "./db/connectDb.ts";
 import bodyParser from "body-parser";
 import express from "express";
 import userRouter from "./routes/v1/userRoute.ts";
+import emailingRouter from "./routes/v1/emailingRoute.ts";
 import session from "express-session";
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
@@ -18,14 +19,9 @@ const app: Express = express();
 
 app.use(
   cors({
-    origin: [
-      "http://localhost:5000",
-      "http://localhost:3000",
-      "http://localhost:3001",
-    ],
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: "http://localhost:3000",
     credentials: true,
-    allowedHeaders: ["Authorization", "Content-Type"],
+    methods: ["GET,HEAD,PUT,PATCH,POST,DELETE"],
   })
 );
 
@@ -125,5 +121,9 @@ app.get(
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user", userRouter);
+
+
+//Business route for emailing
+app.use("/api/v1/biz/emailing", emailingRouter);
 
 connectDb(app);

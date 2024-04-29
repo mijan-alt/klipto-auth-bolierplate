@@ -19,9 +19,8 @@ import {
   UnAuthenticatedError,
   NotfoundError,
   BadRequestError,
+  UnAuthorizedError,
 } from "../../errors/index.ts";
-
-
 
 config();
 
@@ -42,37 +41,65 @@ export const signUp = async (req: Request, res: Response) => {
   } = req.body;
 
   try {
-    const user= await User.findOne({ email:email});
+    const user: UserInterface | null = await User.findOne({ email });
+
     if (user) {
-      throw new Error("Email Already Exist");
+      // Email already exists
+      return res
+        .status(StatusCodes.UNAUTHORIZED)
+        .json({ message: "Email Already Exists" });
     }
 
-   const data = {email, password,username,imageurl}
+    const data = { email, password, username, userdp };
 
-   const userData = new User(data);
+    const userData = new User(data);
 
     // Save the user data to the database
     const newUser = await userData.save();
+
+    if (!newUser) {
+      throw new BadRequestError("Unable to create user");
+    }
+
     const maxAge = 90 * 24 * 60 * 60 * 1000;
     const token = createJWT(newUser._id, maxAge);
     console.log("my token", token);
-    res.cookie("uToken", token, { httpOnly: true }); //store the token in a cookie but make it available only on the server
-    // res.status(StatusCodes.OK).json({message:"Complete"})
-    res.redirect(`http://localhost:3000/addBusiness?userId=${newUser._id}`);
+    res.cookie("uToken", token, { httpOnly: true }); // Store the token in a cookie but make it available only on the server
+
+    // Send a JSON response indicating success
+    res
+      .status(StatusCodes.OK)
+      .json({ message: "Account created successfully", userId: newUser._id });
+
+    // Redirect the user after a short delay (e.g., 1 second)
+    // res.redirect(
+    //   `http://localhost:3000/auth/onboarding?userId=${newUser._id}`
+    // );
+    // setTimeout(() => {
+    //     console.log("Redirecting...");
+    // }, 1000);
   } catch (error) {
     console.log(error);
+    // Handle any errors here
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: "Internal Server Error" });
   }
 };
 
 export const addBusiness = async (req: Request, res: Response) => {
-   const { businessName, businessEmail, businessCategory, businessBio }: {
+  const {
+    businessName,
+    businessEmail,
+    businessCategory,
+    businessBio,
+  }: {
     businessName: string;
     businessEmail: string;
     businessCategory: string;
     businessBio: string;
   } = req.body;
-  const userId: string = req.query.userId as string;//Get the userId from thre query parameters
-
+  const userId: string = req.query.userId as string; //Get the userId from thre query parameters
 
   try {
     //find the user by Id
@@ -91,11 +118,14 @@ export const addBusiness = async (req: Request, res: Response) => {
       userId: userId,
     };
     //create a new business
-     const newBusiness = new Business(businessData);
+    const newBusiness = new Business(businessData);
 
-     await newBusiness.save();
-     user.business=newBusiness._id
-     await user.save();
+    await newBusiness.save();
+    user.business = newBusiness._id;
+    await user.save();
+    await newBusiness.save();
+    user.business = newBusiness._id;
+    await user.save();
 
     res.status(StatusCodes.OK).json({
       message: "Account signed in succesffuly",
@@ -112,14 +142,15 @@ export const addBusiness = async (req: Request, res: Response) => {
 };
 
 export const login = async (req: Request, res: Response) => {
-  const { email, password }:{email:string, password:string} = req.body;
+  const { email, password }: { email: string; password: string } = req.body;
 
   try {
-    const user = await User.findOne({ email }) ;
+    const user = await User.findOne({ email });
 
     if (!user) {
       res.status(StatusCodes.NOT_FOUND).json({ message: "User not found" });
-      return
+      return;
+      return;
     }
 
     const isPasswordCorrect = await user.comparePassword(password);
@@ -142,16 +173,17 @@ export const login = async (req: Request, res: Response) => {
 
 export const forgotPassord = async (req: Request, res: Response) => {
   const { email }: { email: string } = req.body;
-  console.log("email", email)
+  console.log("email", email);
 
   const user = await User.findOne({ email });
 
-  console.log("user", user)
+  console.log("user", user);
 
   if (!user) {
     console.log("User does not exit");
     res.status(StatusCodes.NOT_FOUND).json({ message: "User not found" });
-    return
+    return;
+    return;
   }
 
   const resetToken = user.createResetPasswordToken();
@@ -163,9 +195,11 @@ export const forgotPassord = async (req: Request, res: Response) => {
   console.log(resetToken);
   const resetUrl = `${localUrl}/api/v1/auth/verify/${resetToken}`;
 
-  
+  const templatePath = path.join(
+    process.cwd(),
+    "/src/views/forgotpassword.ejs"
+  );
 
-  const templatePath = path.join(process.cwd(), "/src/views/forgotpassword.ejs");
   const renderHtml = await ejs.renderFile(
     templatePath,
     {
@@ -191,7 +225,7 @@ export const forgotPassord = async (req: Request, res: Response) => {
     user.passwordResetToken = undefined;
     user.passwordResetTokenExpire = undefined;
     //then we save these new values to the database
-
+    console.log(error, "error");
     user.save();
     res.status(StatusCodes.REQUEST_TIMEOUT).json({
       message: "There was an error sending password reset email. Try again ",
@@ -199,12 +233,9 @@ export const forgotPassord = async (req: Request, res: Response) => {
   }
 };
 
-export const verifyToken= async (
-  req: Request,
-  res: Response
-) => {
+export const verifyToken = async (req: Request, res: Response) => {
   const { token } = req.params;
-   const clientURL = process.env.CLIENT_URL;
+  const clientURL = process.env.CLIENT_URL;
 
   try {
     // Encrypt the incoming token
@@ -220,11 +251,12 @@ export const verifyToken= async (
     });
 
     if (!user) {
-        return res.redirect(`${clientURL}/auth/recover`);
+      return res.redirect(`${clientURL}/auth/recover`);
+      return res.redirect(`${clientURL}/auth/recover`);
     }
 
     // If token is valid, redirect to client-side password reset form
-   
+
     return res.redirect(`${clientURL}/reset-password/${token}`);
   } catch (error) {
     res
@@ -235,7 +267,7 @@ export const verifyToken= async (
 
 export const updatePassword = async (req: Request, res: Response) => {
   const { token } = req.params;
-  const { newPassword }:{newPassword:string} = req.body;
+  const { newPassword }: { newPassword: string } = req.body;
 
   try {
     if (!newPassword) {
