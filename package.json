@@ -2,10 +2,10 @@
   "name": "enterbox-server",
   "version": "1.0.0",
   "description": "",
-  "main": "app.js",
+  "main": ".",
   "scripts": {
     "dev": "nodemon ./src/app.ts",
-    "start": "node dist/app.js",
+    "start": "node ./dist/app.js",
     "build": "npm install && tsc"
   },
   "keywords": [],
