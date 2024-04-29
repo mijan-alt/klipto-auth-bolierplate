@@ -2,7 +2,7 @@
   "name": "enterbox-server",
   "version": "1.0.0",
   "description": "",
-  "main": "dist",
+  "main": "./dist",
   "scripts": {
     "dev": "nodemon ./src/app.ts",
     "start": "node ./dist/app.js",
