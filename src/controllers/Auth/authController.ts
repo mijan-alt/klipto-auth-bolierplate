@@ -29,20 +29,27 @@ const localUrl = process.env.BASE_SERVER_URL;
 const clientUrl = process.env.CLIENT_URL;
 
 export const signUp = async (req: Request, res: Response) => {
-  const { email, password, username, imageurl } = req.body;
+  const {
+    email,
+    password,
+    username,
+    imageurl,
+  }: {
+    email: string;
+    password: string;
+    username: string;
+    imageurl: string;
+  } = req.body;
 
   try {
-    const user: UserInterface | null = await User.findOne({ email });
+    const user= await User.findOne({ email:email});
     if (user) {
       throw new Error("Email Already Exist");
     }
 
-    const userData: UserInterface = new User({
-      email,
-      password,
-      username,
-      imageurl
-    });
+   const data = {email, password,username,imageurl}
+
+   const userData = new User(data);
 
     // Save the user data to the database
     const newUser = await userData.save();
@@ -58,13 +65,18 @@ export const signUp = async (req: Request, res: Response) => {
 };
 
 export const addBusiness = async (req: Request, res: Response) => {
-  const { businessName, businessEmail, businessCategory, businessBio } =
-    req.body;
-  const userId = req.query.userId; //Get the userId from thre query parameters
+   const { businessName, businessEmail, businessCategory, businessBio }: {
+    businessName: string;
+    businessEmail: string;
+    businessCategory: string;
+    businessBio: string;
+  } = req.body;
+  const userId: string = req.query.userId as string;//Get the userId from thre query parameters
+
 
   try {
     //find the user by Id
-    const user: UserInterface | null = await User.findById(userId);
+    const user = await User.findById(userId);
 
     if (!user) {
       return res
@@ -79,7 +91,7 @@ export const addBusiness = async (req: Request, res: Response) => {
       userId: userId,
     };
     //create a new business
-     const newBusiness: BusinessInterface = new Business(businessData);
+     const newBusiness = new Business(businessData);
 
      await newBusiness.save();
      user.business=newBusiness._id
@@ -100,10 +112,10 @@ export const addBusiness = async (req: Request, res: Response) => {
 };
 
 export const login = async (req: Request, res: Response) => {
-  const { email, password } = req.body;
+  const { email, password }:{email:string, password:string} = req.body;
 
   try {
-    const user: any = await User.findOne({ email });
+    const user = await User.findOne({ email }) ;
 
     if (!user) {
       res.status(StatusCodes.NOT_FOUND).json({ message: "User not found" });
@@ -129,9 +141,12 @@ export const login = async (req: Request, res: Response) => {
 };
 
 export const forgotPassord = async (req: Request, res: Response) => {
-  const { email } = req.body;
+  const { email }: { email: string } = req.body;
+  console.log("email", email)
 
-  const user: any = await User.findOne({ email });
+  const user = await User.findOne({ email });
+
+  console.log("user", user)
 
   if (!user) {
     console.log("User does not exit");
@@ -154,7 +169,7 @@ export const forgotPassord = async (req: Request, res: Response) => {
   const renderHtml = await ejs.renderFile(
     templatePath,
     {
-      userFullname: user.fullname,
+      userFullname: user.username,
       userEmail: user.email,
       userRecoveryUrl: resetUrl,
     },
@@ -220,7 +235,7 @@ export const verifyToken= async (
 
 export const updatePassword = async (req: Request, res: Response) => {
   const { token } = req.params;
-  const { newPassword } = req.body;
+  const { newPassword }:{newPassword:string} = req.body;
 
   try {
     if (!newPassword) {

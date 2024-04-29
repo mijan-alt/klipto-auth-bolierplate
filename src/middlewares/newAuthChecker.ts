@@ -3,13 +3,9 @@ import jwt from "jsonwebtoken";
 import { UnAuthenticatedError, ValidationError } from "../errors";
 import { config } from "dotenv";
 
-const secreteKey: string | any = process.env.JWT_SECRET;
+const secretKey: string | any = process.env.JWT_SECRET;
 
-const newAuthChecker = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+const newAuthChecker = (req: Request, res: Response, next: NextFunction) => {
   const token = req.cookies["uToken"];
 
   if (!token) {
@@ -17,7 +13,7 @@ const newAuthChecker = (
   }
 
   try {
-    const decodedToken = jwt.verify(token, secreteKey);
+    const decodedToken = jwt.verify(token, secretKey);
 
     if (!decodedToken) {
       throw new ValidationError("You are not logged in");
@@ -39,7 +35,4 @@ const newAuthChecker = (
   }
 };
 
-export {
-  newAuthChecker
-};
-
+export { newAuthChecker };

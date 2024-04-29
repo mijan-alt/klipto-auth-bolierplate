@@ -20,11 +20,12 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2MWUwYzEzZTMxNDJjOTExNmZmOGFlMiI
 //sign-up
 
 https://enterbox-server.onrender.com/api/v1/auth/sign-up
+http://localhost:5000/api/v1/auth/sign-up
 
 
 {
     "username":"mijan",
-    "email":"awajimijan25@gmail.com",
+    "email":"mijanigoni@gmail.com",
     "password":"MIjan@tech"
 }
 
@@ -47,7 +48,7 @@ ${localUrl}/api/v1/auth/verify/${resetToken}
 
 https://enterbox-server.onrender.com/api/v1/auth/forgot-password
 http://localhost:5000/api/v1/auth/forgot-password
-{ "email":"mijanioni@gmail.com" }
+{ "email":"mijanigoni@gmail.com" }
 
 //verify authToken
 verify:token
@@ -55,9 +56,9 @@ https://enterbox-server.onrender.com/api/v1/auth/verify/XXXtoken
 
 
 /update-password
-http://localhost:5000/api/v1/auth/reset-password/c959cb8c23f35ba844ef54af58b51aa5f65b42afe3a516e7dc9e2abd84932654
+http://localhost:5000/api/v1/auth/reset-password/fffdac1a34358acddb49ed9bce2a6bc6adba9a936f0d1d99e99eddc28a43c0aa
 
-{"newPassword":123456789} 
+{"newPassword":"123456789"} 
 
 
 
