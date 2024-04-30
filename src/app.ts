@@ -1,17 +1,17 @@
 import { Express, Request, Response } from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import authRouter from "./routes/v1/authRoute.ts";
-import { connectDb } from "./db/connectDb.ts";
+import authRouter from "./routes/v1/authRoute";
+import { connectDb } from "./db/connectDb";
 import bodyParser from "body-parser";
 import express from "express";
-import userRouter from "./routes/v1/userRoute.ts";
-import emailingRouter from "./routes/v1/emailingRoute.ts";
+import userRouter from "./routes/v1/userRoute";
+import emailingRouter from "./routes/v1/emailingRoute";
 import session from "express-session";
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { config } from "dotenv";
-import User from "./Models/UserSchema.ts";
+import User from "./Models/UserSchema";
 
 config(); // Load environment variables from .env file
 

@@ -1,26 +1,26 @@
-import User from "../../Models/UserSchema.ts";
+import User from "../../Models/UserSchema";
 import { StatusCodes } from "http-status-codes";
 import { Express, Request, Response } from "express";
-import { UserInterface } from "../../interfaces/userAuthInterface.ts";
+import { UserInterface } from "../../interfaces/userAuthInterface";
 import jwt from "jsonwebtoken";
-import { createJWT } from "../../utils/jwt.ts";
+import { createJWT } from "../../utils/jwt";
 import bcrypt from "bcrypt";
 import { config } from "dotenv";
 import fs from "fs";
 import path from "path";
 import ejs from "ejs";
-import { sendMails } from "../../utils/sendEmail.ts";
+import { sendMails } from "../../utils/sendEmail";
 import { isTokenValid } from "../../utils/jwt.js";
 import crypto from "crypto";
-import { Business } from "../../Models/BusinessSchema.ts";
-import { BusinessInterface } from "../../interfaces/userAuthInterface.ts";
+import { Business } from "../../Models/BusinessSchema";
+import { BusinessInterface } from "../../interfaces/userAuthInterface";
 import {
   ValidationError,
   UnAuthenticatedError,
   NotfoundError,
   BadRequestError,
   UnAuthorizedError,
-} from "../../errors/index.ts";
+} from "../../errors/index";
 
 config();
 

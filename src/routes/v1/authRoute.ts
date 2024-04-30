@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { addBusiness } from "../../controllers/Auth/authController.ts";
+import { addBusiness } from "../../controllers/Auth/authController";
 
 import {
   login,
@@ -7,7 +7,7 @@ import {
   forgotPassord,
   verifyToken,
   updatePassword,
-} from "../../controllers/Auth/authController.ts";
+} from "../../controllers/Auth/authController";
 
 const authRouter = Router();
 

@@ -1,8 +1,8 @@
-import User from "../../Models/UserSchema.ts";
+import User from "../../Models/UserSchema";
 import express from "express";
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { isTokenValid } from "../../utils/jwt.ts";
+import { isTokenValid } from "../../utils/jwt";
 import { JwtPayload } from "jsonwebtoken";
 import { UnAuthenticatedError } from "../../errors";
 
