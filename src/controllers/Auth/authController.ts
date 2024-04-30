@@ -181,7 +181,7 @@ export const forgotPassord = async (req: Request, res: Response) => {
     console.log("User does not exit");
     res.status(StatusCodes.NOT_FOUND).json({ message: "User not found" });
     return;
-    return;
+  
   }
 
   const resetToken = user.createResetPasswordToken();
