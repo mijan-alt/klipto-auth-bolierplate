@@ -6,7 +6,12 @@ import { config } from "dotenv";
 const secretKey: string | any = process.env.JWT_SECRET;
 
 const newAuthChecker = (req: Request, res: Response, next: NextFunction) => {
-  const token = req.cookies["uToken"];
+  // const token = req.cookies["uToken"];
+  const token = req.headers.cookie
+  
+  console.log("my token")
+
+  console.log("my token", token)
 
   if (!token) {
     throw new UnAuthenticatedError("Un authorized access");

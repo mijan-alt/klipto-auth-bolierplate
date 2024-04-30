@@ -250,12 +250,11 @@ export const verifyToken = async (req: Request, res: Response) => {
 
     if (!user) {
       return res.redirect(`${clientURL}/auth/recover`);
-      return res.redirect(`${clientURL}/auth/recover`);
     }
 
     // If token is valid, redirect to client-side password reset form
 
-    return res.redirect(`${clientURL}/reset-password/${token}`);
+    return res.redirect(`${clientURL}/reset-password?token=${token}`);
   } catch (error) {
     res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
@@ -264,8 +263,8 @@ export const verifyToken = async (req: Request, res: Response) => {
 };
 
 export const updatePassword = async (req: Request, res: Response) => {
-  const { token } = req.params;
-  const { newPassword }: { newPassword: string } = req.body;
+ 
+  const { newPassword , token}: { newPassword: string, token:string } = req.body;
 
   try {
     if (!newPassword) {
