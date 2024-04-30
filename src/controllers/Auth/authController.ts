@@ -1,26 +1,26 @@
-import User from "../../Models/UserSchema.ts";
+import User from "../../Models/UserSchema";
 import { StatusCodes } from "http-status-codes";
 import { Express, Request, Response } from "express";
-import { UserInterface } from "../../interfaces/userAuthInterface.ts";
+import { UserInterface } from "../../interfaces/userAuthInterface";
 import jwt from "jsonwebtoken";
-import { createJWT } from "../../utils/jwt.ts";
+import { createJWT } from "../../utils/jwt";
 import bcrypt from "bcrypt";
 import { config } from "dotenv";
 import fs from "fs";
 import path from "path";
 import ejs from "ejs";
-import { sendMails } from "../../utils/sendEmail.ts";
+import { sendMail } from "../../utils/sendEmail";
 import { isTokenValid } from "../../utils/jwt.js";
 import crypto from "crypto";
-import { Business } from "../../Models/BusinessSchema.ts";
-import { BusinessInterface } from "../../interfaces/userAuthInterface.ts";
+import { Business } from "../../Models/BusinessSchema";
+import { BusinessInterface } from "../../interfaces/userAuthInterface";
 import {
   ValidationError,
   UnAuthenticatedError,
   NotfoundError,
   BadRequestError,
   UnAuthorizedError,
-} from "../../errors/index.ts";
+} from "../../errors/index";
 
 config();
 
@@ -209,7 +209,7 @@ export const forgotPassord = async (req: Request, res: Response) => {
   );
 
   try {
-    await sendMails({
+    await sendMail({
       email: user.email,
       subject: "Password Recovery",
       html: renderHtml,
@@ -232,15 +232,16 @@ export const forgotPassord = async (req: Request, res: Response) => {
 };
 
 export const verifyToken = async (req: Request, res: Response) => {
+  console.log("hitting the verify")
   const { token } = req.params;
-  const clientURL = process.env.CLIENT_URL;
+
+  console.log("my token", token)
 
   try {
     // Encrypt the incoming token
-    const encryptedToken = crypto
-      .createHash("sha256")
-      .update(token)
-      .digest("hex");
+
+    const encryptedToken = crypto.createHash("sha256").update(token).digest("hex");
+    console.log("encryptedtokne", encryptedToken)
 
     // Find the user whose passwordResetToken matches the encrypted token
     const user = await User.findOne({
@@ -249,12 +250,21 @@ export const verifyToken = async (req: Request, res: Response) => {
     });
 
     if (!user) {
-      return res.redirect(`${clientURL}/auth/recover`);
+      res.redirect(`${clientUrl}/auth/recover`);
+      return
     }
 
-    // If token is valid, redirect to client-side password reset form
+    // if (!user) {
+    //   res.status(StatusCodes.).json({ message: "Token expired" })
+    //   return
+    // }
 
-    return res.redirect(`${clientURL}/reset-password?${token}`);
+    // If token is valid, redirect to client-side password reset form
+    // res.status(StatusCodes.OK).json({
+    //   message: "reset link set",
+    //   reset_token:token
+    // })
+    res.redirect(`${clientUrl}/reset-password?token=${token}`);
   } catch (error) {
     res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
@@ -262,9 +272,9 @@ export const verifyToken = async (req: Request, res: Response) => {
   }
 };
 
-export const updatePassword = async (req: Request, res: Response) => {
-  const { token } = req.params;
-  const { newPassword }: { newPassword: string } = req.body;
+export const updatePassword = async (req: Request, res: Response) => { 
+ 
+  const { newPassword , token}: { newPassword: string, token:string } = req.body;
 
   try {
     if (!newPassword) {
@@ -281,8 +291,7 @@ export const updatePassword = async (req: Request, res: Response) => {
 
     // Find the user whose passwordResetToken matches the encrypted token
     const user = await User.findOne({
-      passwordResetToken: encryptedToken,
-      passwordResetTokenExpire: { $gt: Date.now() },
+      passwordResetToken: encryptedToken
     });
 
     if (!user) {

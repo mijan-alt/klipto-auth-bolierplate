@@ -11,6 +11,7 @@ interface UserInterface extends Document {
   googleId?: string;
   business: Types.ObjectId;
   userdp?: string;
+  emailVerified: boolean;
 }
 
 interface BusinessInterface extends Document {

@@ -1,9 +1,9 @@
-import { getActiveUser } from "../../controllers/User/userController.ts";
+import { getActiveUser } from "../../controllers/User/userController";
 import { Router } from "express";
-import { newAuthChecker } from "../../middlewares/index.ts";
+import { newAuthChecker } from "../../middlewares/index";
 
 const userRouter = Router();
 
-userRouter.route("/active-user/:id").get(newAuthChecker, getActiveUser);
+userRouter.route("/active-user").get(newAuthChecker, getActiveUser);
 
 export default userRouter;

@@ -1,8 +1,8 @@
-import ValidationError from "./ValidationError.ts";
-import UnAuthenticatedError from "./UnAuthenticatedError.ts";
-import NotfoundError from "./NotfoundError.ts";
-import BadRequestError from "./BadRequest.ts";
-import UnAuthorizedError from "./UnAuthorizedError.ts";
+import ValidationError from "./ValidationError";
+import UnAuthenticatedError from "./UnAuthenticatedError";
+import NotfoundError from "./NotfoundError";
+import BadRequestError from "./BadRequest";
+import UnAuthorizedError from "./UnAuthorizedError";
 
 export {
   ValidationError,

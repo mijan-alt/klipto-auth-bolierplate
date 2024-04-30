@@ -30,7 +30,12 @@ const UserSchema = new mongoose.Schema<UserInterface>(
     },
     passwordResetToken: String,
     passwordResetTokenExpire: Date,
+    emailVerified: {
+      type: Boolean,
+      default: false,
+    },
   },
+
   {
     timestamps: true,
   }

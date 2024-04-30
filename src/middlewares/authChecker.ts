@@ -1,7 +1,7 @@
-import { isTokenValid } from "../utils/jwt.ts";
+import { isTokenValid } from "../utils/jwt";
 import { Express, Request, Response, NextFunction } from "express";
-import UnAuthenticatedError from "../errors/UnAuthenticatedError.ts";
-import User from "../Models/UserSchema.ts";
+import UnAuthenticatedError from "../errors/UnAuthenticatedError";
+import User from "../Models/UserSchema";
 
 export const authenticateUser = async (
   req: Request,
@@ -13,6 +13,8 @@ export const authenticateUser = async (
   // check header
 
   const authHeader = req.headers.authorization;
+
+  console.log(authHeader)
 
   if (!authHeader || authHeader.startsWith("Bearer ")) {
     throw new UnAuthenticatedError("Authentication Token is missing");
