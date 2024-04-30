@@ -9,7 +9,7 @@ https://enterbox-server.onrender.com/api/v1/auth/add-business?userId=6615640c049
 
 
 /get single user
-https://enterbox-server.onrender.com/api/v1/user/active-user
+https://enterbox-server.onrender.com/api/v1/user/active-user/6628ec95ad2679493609ec25
 
 
 /authToken
@@ -56,10 +56,9 @@ https://enterbox-server.onrender.com/api/v1/auth/verify/XXXtoken
 
 
 /update-password
-http://localhost:5000/api/v1/auth/reset-password/fffdac1a34358acddb49ed9bce2a6bc6adba9a936f0d1d99e99eddc28a43c0aa
+http://localhost:5000/api/v1/auth/reset-password
 
-{"newPassword":"123456789"} 
-
+ { newPassword , token}
 
 
 http://localhost:5000/api/v1/user/active-user
