@@ -9,7 +9,7 @@ https://enterbox-server.onrender.com/api/v1/auth/add-business?userId=6615640c049
 
 
 /get single user
-https://enterbox-server.onrender.com/api/v1/user/single-user/6628ec95ad2679493609ec25
+https://enterbox-server.onrender.com/api/v1/user/active-user
 
 
 /authToken

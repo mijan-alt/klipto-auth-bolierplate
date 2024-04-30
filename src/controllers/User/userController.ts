@@ -28,9 +28,7 @@ export const getActiveUser = async (req: Request, res: Response) => {
 
     
     // Send the populated user object
-    res.status(StatusCodes.OK).json({
-      user,
-    });
+    res.status(StatusCodes.OK).json(user);
   } catch (error) {
     console.error(error);
 

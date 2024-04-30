@@ -9,7 +9,7 @@ import { config } from "dotenv";
 import fs from "fs";
 import path from "path";
 import ejs from "ejs";
-import { sendMails } from "../../utils/sendEmail";
+import { sendMail } from "../../utils/sendEmail";
 import { isTokenValid } from "../../utils/jwt.js";
 import crypto from "crypto";
 import { Business } from "../../Models/BusinessSchema";
@@ -209,7 +209,7 @@ export const forgotPassord = async (req: Request, res: Response) => {
   );
 
   try {
-    await sendMails({
+    await sendMail({
       email: user.email,
       subject: "Password Recovery",
       html: renderHtml,
@@ -232,15 +232,16 @@ export const forgotPassord = async (req: Request, res: Response) => {
 };
 
 export const verifyToken = async (req: Request, res: Response) => {
+  console.log("hitting the verify")
   const { token } = req.params;
-  const clientURL = process.env.CLIENT_URL;
+
+  console.log("my token", token)
 
   try {
     // Encrypt the incoming token
-    const encryptedToken = crypto
-      .createHash("sha256")
-      .update(token)
-      .digest("hex");
+
+    const encryptedToken = crypto.createHash("sha256").update(token).digest("hex");
+    console.log("encryptedtokne", encryptedToken)
 
     // Find the user whose passwordResetToken matches the encrypted token
     const user = await User.findOne({
@@ -249,12 +250,21 @@ export const verifyToken = async (req: Request, res: Response) => {
     });
 
     if (!user) {
-      return res.redirect(`${clientURL}/auth/recover`);
+      res.redirect(`${clientUrl}/auth/recover`);
+      return
     }
 
-    // If token is valid, redirect to client-side password reset form
+    // if (!user) {
+    //   res.status(StatusCodes.).json({ message: "Token expired" })
+    //   return
+    // }
 
-    return res.redirect(`${clientURL}/reset-password?token=${token}`);
+    // If token is valid, redirect to client-side password reset form
+    // res.status(StatusCodes.OK).json({
+    //   message: "reset link set",
+    //   reset_token:token
+    // })
+    res.redirect(`${clientUrl}/reset-password?token=${token}`);
   } catch (error) {
     res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
@@ -262,7 +272,7 @@ export const verifyToken = async (req: Request, res: Response) => {
   }
 };
 
-export const updatePassword = async (req: Request, res: Response) => {
+export const updatePassword = async (req: Request, res: Response) => { 
  
   const { newPassword , token}: { newPassword: string, token:string } = req.body;
 

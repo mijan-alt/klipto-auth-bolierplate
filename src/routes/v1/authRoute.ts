@@ -17,7 +17,7 @@ authRouter.route("/login").post(login);
 authRouter.route("/forgot-password").post(forgotPassord);
 authRouter
   .route("/verify/:token")
-  .post(verifyToken);
+  .get(verifyToken);
 authRouter.route("/reset-password/:token").post(updatePassword);
 
 //Onboarding route
