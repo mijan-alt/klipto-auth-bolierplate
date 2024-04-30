@@ -14,6 +14,8 @@ export const authenticateUser = async (
 
   const authHeader = req.headers.authorization;
 
+  console.log(authHeader)
+
   if (!authHeader || authHeader.startsWith("Bearer ")) {
     throw new UnAuthenticatedError("Authentication Token is missing");
   }

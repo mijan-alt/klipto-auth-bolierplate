@@ -7,17 +7,16 @@ import { JwtPayload } from "jsonwebtoken";
 import { UnAuthenticatedError } from "../../errors";
 
 export const getActiveUser = async (req: Request, res: Response) => {
-  // const id = req.params.id;
 
   try {
 
     if (!req.user) {
       throw new UnAuthenticatedError("User is not verified");
     }
-    console.log(req.user, "request object")
 
     const userid = req.user;
 
+    // const user = await User.findById(userid).populate("business");
     const user = await User.findById(userid).populate("business");
 
     if (!user) {

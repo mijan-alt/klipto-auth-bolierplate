@@ -62,7 +62,16 @@ http://localhost:5000/api/v1/auth/reset-password/fffdac1a34358acddb49ed9bce2a6bc
 
 
 
-http://localhost:5000/api/v1/user/active-user/:id
+http://localhost:5000/api/v1/user/active-user
+
+
+//post verification success
+{clientURL}/reset-password?token=${token}
+
+
+//post verification failure
+
+${clientURL}/auth/recover
 
 
 

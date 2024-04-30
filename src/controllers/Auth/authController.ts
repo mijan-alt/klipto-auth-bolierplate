@@ -281,8 +281,7 @@ export const updatePassword = async (req: Request, res: Response) => {
 
     // Find the user whose passwordResetToken matches the encrypted token
     const user = await User.findOne({
-      passwordResetToken: encryptedToken,
-      passwordResetTokenExpire: { $gt: Date.now() },
+      passwordResetToken: encryptedToken
     });
 
     if (!user) {
