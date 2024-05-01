@@ -191,7 +191,7 @@ export const forgotPassord = async (req: Request, res: Response) => {
   await user.save();
 
   console.log(resetToken);
-  const resetUrl = `${localUrl}/api/v1/auth/verify/${resetToken}`;
+  const resetUrl = `${process.env.BASE_SERVER_URL}/api/v1/auth/verify/${resetToken}`;
 
   const templatePath = path.join(
     process.cwd(),
@@ -215,6 +215,7 @@ export const forgotPassord = async (req: Request, res: Response) => {
       html: renderHtml,
     });
 
+    
     res
       .status(StatusCodes.OK)
       .json({ message: "Password reset link has been sent to your email" });
